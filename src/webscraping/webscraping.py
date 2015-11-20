@@ -11,12 +11,14 @@ def scrapehelper():
 	sessionIDString = "PHPSESSID="+sessionID
 	r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
         getAvailableDates (r1.text)
+        print "-----"
         date = raw_input ("Enter data in DD-MM-YYYY: ")
         r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": date, "q":""})
-        getAvailableCourts (r2.text)
-        courtNo = input ("Enter CourtNo:")
-	r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":"Court No. " + `courtNo`,"court_wise_submit":"Submit","q":""})
-	parseHTMLtoJSON(r3.text)
+        courtNos = getAvailableCourts (r2.text)
+        print "-----"
+        for courtNo in courtNos:
+            r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":courtNo.text,"court_wise_submit":"Submit","q":""})
+	    parseHTMLtoJSON(r3.text)
 
 def getAvailableDates (htmlText):
     soup = BeautifulSoup (htmlText, 'html.parser')
@@ -31,6 +33,7 @@ def getAvailableCourts (htmlText):
     print "Available Courts:"
     for option in options:
         print option.text
+    return options
 
 def parseHTMLtoJSON(htmlText):
 	soup = BeautifulSoup(htmlText, 'html.parser')
@@ -50,10 +53,11 @@ def storeHeader(headerText):
 	headerData["CourtNo"] = courtNo
 	headerData["Justice1"] = justice1
 	headerData["Justice2"] = justice2
-
-        print courtNo
-        print justice1
-        print justice2
+        
+        print "Court No: ", courtNo
+        print "Justice 1: ", justice1
+        print "Justice 2: ", justice2
+        print "-----"
 
 if __name__ == '__main__':
 	scrapehelper()
