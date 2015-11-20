@@ -10,13 +10,14 @@ def scrapehelper():
 
 	sessionIDString = "PHPSESSID="+sessionID
 	r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
-	r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": "06-11-2015", "q":""})
-	r3 = requests.post ("http://clists.nic.in/viewlist/search_result_final.php", headers={"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"}, data={"court_wise":"Court No. 10","court_wise_submit":"Submit","q":""})
+        date = raw_input ("Enter data in DD-MM-YYYY: ")
+        r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": date, "q":""})
+        courtNo = input ("Enter CourtNo:")
+	r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":"Court No. " + `courtNo`,"court_wise_submit":"Submit","q":""})
 	parseHTMLtoJSON(r3.text)
 	
 
 def parseHTMLtoJSON(htmlText):
-	# print htmlText
 	soup = BeautifulSoup(htmlText, 'html.parser')
 
 	tables = soup.findChildren('table')
@@ -34,6 +35,10 @@ def storeHeader(headerText):
 	headerData["CourtNo"] = courtNo
 	headerData["Justice1"] = justice1
 	headerData["Justice2"] = justice2
+
+        print courtNo
+        print justice1
+        print justice2
 
 if __name__ == '__main__':
 	scrapehelper()
