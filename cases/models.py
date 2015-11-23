@@ -23,7 +23,7 @@ class Cases(models.Model):
     respondant_lawyers = models.ForeignKey(Lawyers,related_name = "respondant")
 
 class CaseFilter(models.Model):
-    search = models.ForeignKey(Cases)
+    search = models.ForeignKey(CaseSearch)
     field = models.CharField(max_length = 200)
     criteria = models.CharField(max_length = 200)
     

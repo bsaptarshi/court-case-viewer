@@ -1,12 +1,29 @@
 from lawCalender.utils import urlencodeSerializer
 from home.models import Judge, Lawyers, UserProfile
 
+
 from tastypie.resources import ModelResource
 from tastypie.authorization import Authorization
 from tastypie.authentication import Authentication
+from tastypie import fields
 
+from django.contrib.auth.models import User
+
+class UserResources(ModelResource):
+   
+    class Meta:
+        queryset = User.objects.filter()
+        resource_name = 'user'
+        authorization = Authorization()
+        authentication = Authentication()
+        excludes = [ 'datetime','password']
+        allowed_methods = ['get','post','put','patch']
+        serializer = urlencodeSerializer()
+        always_return_data = True
+  
 
 class JudgeResources(ModelResource):
+    user = fields.ForeignKey(UserResources, 'user')
     class Meta:
         queryset = Judge.objects.filter()
         resource_name = 'judge'
@@ -18,6 +35,7 @@ class JudgeResources(ModelResource):
         always_return_data = True
 
 class LawyersResources(ModelResource):
+    user = fields.ForeignKey(UserResources, 'user')
     class Meta:
         queryset = Lawyers.objects.filter()
         resource_name = 'lawyers'
@@ -29,6 +47,7 @@ class LawyersResources(ModelResource):
         always_return_data = True
 
 class UserProfileResources(ModelResource):
+    user = fields.ForeignKey(UserResources, 'user')
     class Meta:
         queryset = UserProfile.objects.filter()
         resource_name = 'userprofile'
