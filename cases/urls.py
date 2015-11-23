@@ -9,10 +9,10 @@ case_resource = CasesResources()
 urlpatterns = patterns('home.views',
     # Examples:
    
-    url(r'^api/filter/', include(case_filter_resource.urls)), 
-    url(r'^api/search/', include(case_search_resource.urls)), 
-    url(r'^api/court/', include(court_resource.urls)), 
-    url(r'^api/case/', include(case_resource.urls)), 
+    url(r'^api/', include(case_filter_resource.urls)), 
+    url(r'^api/', include(case_search_resource.urls)), 
+    url(r'^api/', include(court_resource.urls)), 
+    url(r'^api/', include(case_resource.urls)), 
     
     
    #  url(r'^$', include('home.urls')),

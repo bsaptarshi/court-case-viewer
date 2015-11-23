@@ -9,9 +9,9 @@ user_profile_resource = UserProfileResources()
 urlpatterns = patterns('home.views',
     # Examples:
    #url(r'^$', 'home'),
-    url(r'^api/judge/', include(tasks_resource.urls)), 
-     url(r'^api/lawyers/', include(laywer_resource.urls)), 
-      url(r'^api/userprofile/', include(user_profile_resource.urls)), 
+    url(r'^api/', include(tasks_resource.urls)), 
+     url(r'^api/', include(laywer_resource.urls)), 
+      url(r'^api/', include(user_profile_resource.urls)), 
     
     
    #  url(r'^$', include('home.urls')),
