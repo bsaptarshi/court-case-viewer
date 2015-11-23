@@ -26,7 +26,7 @@ Using this data you can send a post request to the above urla nd it will create 
 
 "user":"/home/api/user/1/" : This indicates that a the user with id 1 and which can be found via rest api at the above url is the foreign key in the judge model/class/table
 
-To access individual objects http://court-case-viewer-dev.elasticbeanstalk.com/home/api/judge/1/?format=json
+To access individual objects http://court-case-viewer-dev.elasticbeanstalk.com/home/api/user/1/?format=jsonn
 
 The same can be used for every model/class in the above apps. 
 
