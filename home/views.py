@@ -2,13 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login,logout as django_logout
 from django.http import Http404
 
-from lawCalender.webscrapping import scrapehelper
+
 
 # Create your views here.
-
-
-def home(request):
-    return scrapehelper()
 
 def login(request):
     username = request.POST['username']
