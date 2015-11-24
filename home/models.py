@@ -29,3 +29,7 @@ LAWYER_CHOICES = (
 class Lawyers(models.Model):
     user = models.ForeignKey(User)
     type = models.CharField(max_length = 200, choices = LAWYER_CHOICES)
+    
+class Test(models.Model):
+    datetime = models.DateTimeField(auto_now_add = True)
+    
