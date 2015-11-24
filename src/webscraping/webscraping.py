@@ -10,20 +10,26 @@ bodyData = []
 keyMap = {'0' : 'SLNO', '1' : 'CASENO', '2' : 'PARTY', '3' : 'PETADV', '4' : 'RESADV'}
 
 def scrapehelper():
-	r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
-	sessionID = r0.headers['Set-Cookie'].split('=', 1)[1].split(';')[0]
+    testOrScrape = raw_input ("Use sample file for testing (y/n):")
+    if testOrScrape == "n":
+        r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
+        sessionID = r0.headers['Set-Cookie'].split('=', 1)[1].split(';')[0]
 
-	sessionIDString = "PHPSESSID="+sessionID
-	r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
-	getAvailableDates (r1.text)
-	print "-----"
-	date = raw_input ("Enter data in DD-MM-YYYY: ")
-	r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": date, "q":""})
-	courtNos = getAvailableCourts (r2.text)
-	print "-----"
-	court = raw_input ("Enter Court No: ")
-	r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":"Court No. "+court,"court_wise_submit":"Submit","q":""})
-	parseHTMLtoJSON(r3.text)
+        sessionIDString = "PHPSESSID="+sessionID
+        r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
+        getAvailableDates (r1.text)
+        print "-----"
+        date = raw_input ("Enter data in DD-MM-YYYY: ")
+        r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": date, "q":""})
+        courtNos = getAvailableCourts (r2.text)
+        print "-----"
+        court = raw_input ("Enter Court No: ")
+        r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":"Court No. "+court,"court_wise_submit":"Submit","q":""})
+        parseHTMLtoJSON(r3.text)
+    else:
+        sample = open ('sample.html', 'r')
+        parseHTMLtoJSON(sample.read ())
+    
 
 def getAvailableDates (htmlText):
     soup = BeautifulSoup (htmlText, 'html.parser')
