@@ -10,6 +10,8 @@ user_resource = UserResources()
 urlpatterns = patterns('home.views',
     # Examples:
    #url(r'^$', 'home'),
+    url(r'^login/','login'),
+    url(r'^logout/','logout'),
     url(r'^api/', include(tasks_resource.urls)), 
     url(r'^api/', include(laywer_resource.urls)), 
     url(r'^api/', include(user_profile_resource.urls)), 
