@@ -93,7 +93,11 @@ def extractBodyText(row):
 		num = num + 1
 
 	pp = pprint.PrettyPrinter(indent=4)
-	pp.pprint(bodyData)
+	#pp.pprint(bodyData)
+        pprinted = pp.pformat (bodyData)
+        print pprinted
+        r = requests.post ("url", data={"body": pprinted, "date":"25-11-2015", "court":"13"})
+
             
 def storeRowData(data):
 	# print "PRINTING RAW DATA"
