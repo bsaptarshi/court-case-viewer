@@ -39,14 +39,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'tastypie',
-    'djcelery',
+  
     
 )
 MY_APPS = ('cases','home',)
 INSTALLED_APPS+=MY_APPS
 
-import djcelery
-djcelery.setup_loader()
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -91,10 +90,7 @@ DATABASES = {
 }
 
 
-BROKER_URL = 'redis://localhost:6379/0'
-BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

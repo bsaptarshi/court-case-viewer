@@ -1,6 +1,6 @@
-from django.shortcuts import render
 from django.contrib.auth import authenticate, login,logout as django_logout
 from django.http import Http404
+from home.models import Test
 
 
 
@@ -22,3 +22,7 @@ def logout(self, request):
             django_logout(request)
             return 
         return Http404("User not found")
+    
+def webScraping(request):
+    Test.objects.create()
+    return  
