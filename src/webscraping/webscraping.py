@@ -5,13 +5,18 @@ import re
 from collections import defaultdict
 import pprint
 from datetime import date
+import sys
+
 
 headerData = {}
 bodyData = []
 keyMap = {'0' : 'SLNO', '1' : 'CASENO', '2' : 'PARTY', '3' : 'PETADV', '4' : 'RESADV'}
 
-def scrapehelper():
-    daemon = raw_input ("Daemon format (y/n): ")
+def scrapehelper(argv):
+    if len (argv) == 1:
+        daemon = "y"
+    else:
+        daemon = "n"
     if daemon == "n":
         testOrScrape = raw_input ("Use sample file for testing (y/n):")
         if testOrScrape == "n":
@@ -129,4 +134,4 @@ def storeHeader(headerText):
         print "-----"
 
 if __name__ == '__main__':
-	scrapehelper()
+    scrapehelper(sys.argv[1:])
