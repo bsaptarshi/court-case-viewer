@@ -69,7 +69,7 @@ def parseHTMLtoJSON(htmlText):
 	tables = soup.findChildren('table')
 #	print len(tables)
 	storeHeader(tables[0])
-#	storeBody(tables)
+	storeBody(tables)
 
 
 def storeBody(bodyText):
@@ -88,7 +88,6 @@ def extractBodyText(row):
 		bodyData.insert(num, rowData)
 		num = num + 1
 
-	print "PRINTING DATASET"	
 	pp = pprint.PrettyPrinter(indent=4)
 	pp.pprint(bodyData)
             
@@ -101,8 +100,7 @@ def storeRowData(data):
 	for e in elem:
 		# print "COUNT = ", count%5
 		currKey = keyMap[str(count%5)]
-		dataSet[currKey] += "&&&&" + str(e.find('pre-line'))
-
+		dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line","").replace ("/pre-line>","")
 		if e.has_attr("colspan"):
 			count = count + int(e['colspan'])
 		else:
