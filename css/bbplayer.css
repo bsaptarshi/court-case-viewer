@@ -1,0 +1,123 @@
+/* 
+Optional styling for bbplayer elements.
+*/
+@import url(https://fonts.googleapis.com/css?family=Lato:300italic,700italic,300,700);
+
+.bbplayer {
+  	font: bold 16px/1.5 Lato,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	color: #38E3F5;
+	margin-left: 21%;
+	padding-top: 4%;
+}
+
+.bb-play {
+  	display: inline-block;
+	vertical-align: middle;
+	height: 30px;
+	width: 30px;
+	top: 16%;
+	left: 2.3%;
+	background-position: 9px 5px;
+	border: 5px solid #38E3F5;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+	-moz-border-radius: 50%;
+	-o-border-radius: 50%;
+	background: #21B8C6;
+	background-image: url('../images/play-icon1.png');
+	background-repeat: no-repeat;
+	background-position: 7px 4px;
+	cursor: pointer;
+	position: absolute;
+}
+
+.bb-playing {
+  vertical-align: middle;
+  background-image: url('../images/pause.png');
+  background-position: center center;
+}
+
+.bb-forward {
+ 	vertical-align: middle;
+	display: inline-block;
+	height: 30px;
+	width: 30px;
+	background: #21B8C6;
+  	background-image: url('../images/next.png');
+ 	 background-position: center;
+  	background-repeat: no-repeat;
+  	cursor: pointer;
+  	border-radius: 30em;
+	-webkit-border-radius: 30em;
+	-moz-border-radius: 30em;
+	-o-border-radius: 30em;
+}
+
+.bb-rewind {
+	vertical-align: middle;
+	display: inline-block;
+	height: 30px;
+	width: 30px;
+	background:#21B8C6;
+	background-image: url('../images/pre.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	border-radius: 30em;
+	-webkit-border-radius: 30em;
+	-moz-border-radius: 30em;
+	-o-border-radius: 30em;
+	margin: 0 .5em 0 0em;
+}
+.bb-trackTime {
+  	vertical-align: middle;
+	line-height: 42px;
+	display: inline-block;
+	height: 32px;
+	color: #475965;
+	margin-left: 5%;
+	font-size: 0.875em;
+	margin-top: 0.2em;
+}
+
+.bb-trackLength {
+  vertical-align: middle;
+  line-height: 42px;
+  display: inline-block;
+  height: 32px;
+  color:#38E3F5;
+  font-size: 0.875em;
+	margin-top: 0.2em;
+}
+
+.bb-trackTitle {
+ 	color: #475965;
+	font-weight: 400;
+	text-transform: uppercase;
+	position: absolute;
+	left: 52%;
+	top: 5%;
+	font-size: 0.6em;
+	border-bottom: 1px dashed #475965;
+	padding-bottom: 0.2em;
+	width: 44%;
+	margin-bottom: 0.5em;
+}
+
+.bb-debug {
+  height:10em;
+  width: 32em;
+  border: 1px solid #DDD;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+  overflow: auto;
+  font-weight: normal;
+  font-size: 14px/1.5;
+}
+
+.bb-label {
+  font-size: 14px/1.5;
+  font-weight: 300;
+  margin: 10px;
+}
