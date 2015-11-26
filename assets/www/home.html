@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link href="css/style.css" rel='stylesheet' type='text/css' />
+        <link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css" />
+        <link type="text/css" rel="stylesheet" href="css/jquery-ui.min.css" />
+        <link href="css/jquery.dataTables.min.css" rel='stylesheet' type='text/css' /> 
+        <link href="css/dataTables.jqueryui.min.css" rel='stylesheet' type='text/css' /> 
+        <title>Court Case Schedule Viewer</title>
+        <style type="text/css">
+            .header{
+                background-color: white; 
+                height: 5%
+                text-align:center;
+                padding:3% 0% 0% 0%;
+            }
+            .footer{
+                position: inherit;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                padding: 1rem;
+                text-align: right;
+            }
+            h2{
+                text-align: center;
+                font-size: 18px;
+            }
+            .loginForm{
+                position:absolute;             /* position in the center of the screen */
+                width: 100%;
+                top:50%;                  /* text area width */
+                text-align: center;
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body style="background:white;">
+        <div id="wrapper">
+            <div id="header">
+                <a href="#menu-left"> </a>
+            </div>
+            <nav id="menu-left">
+                <ul>
+                    <li class="active" id="li1"><a href="#tabs-1">Home</a></li>
+                    <li><a href="#tabs-2" id="li2">Schedule</a></li>
+                    <li><a href="#tabs-3" id="li3">Preferences</a></li>
+                    <li><a href="#" id="li4">About Us</a></li>
+                </ul>
+            </nav>
+            <div class="header">
+                <h2>Court Case Schedule Viewer</h2> 
+            </div>
+            <hr/><br/>
+            <div id="tabs" style="width:90%;margin:auto;font-size:1em;">
+                <ul>
+                    <li><a href="#tabs-1">Home</a>
+                    </li>
+                    <li><a href="#tabs-2">Schedule</a>
+                    </li>
+                    <li><a href="#tabs-3">Preferences</a>
+                    </li>
+                </ul>
+                <div id="tabs-1">
+                    <p><br/>
+                        Welcome to Court Case Schedule Viewer x.y.z.<br/>
+                        Our application will let you vie cases that are  scheduled to go up for hearing on a particular day, and apply  various filters  for selective viewing.
+                    </p>
+                    <br/>
+                    <p>
+                        Switch over to the schedule tab to view cases for a particular day by a particular court.
+                    </p>
+                    <br/>
+                    <p>
+                        The Preference tab allows you to select a particular court, and set a date preference for which cases will be shown.
+                    </p>
+                    <br/>
+                    <p>
+                        <b>Announcements</b></br/>
+                    </p>
+                </div>
+                <div id="tabs-2" style="overflow-x:scroll;">
+                    <p><br/>
+                    Schedule For <input type="text" id="datepicker"><br/><br/>
+                    <table id="scheduleTable" class="display" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Case No.</th>
+                                <th>Court No.</th>
+                                <th>Party</th>
+                                <th>Petitioner Advocate</th>
+                                <th>Respondent Advocate</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th>Case No.</th>
+                                <th>Court No.</th>
+                                <th>Party</th>
+                                <th>Petitioner Advocate</th>
+                                <th>Respondent Advocate</th>
+                                <th>Details</th>
+                            </tr>
+                        </tfoot>
+                        <tbody>
+                            <tr>
+                                <td>Tiger Nixon</td>
+                                <td>System Architect</td>
+                                <td>Edinburgh</td>
+                                <td>61</td>
+                                <td>2011/04/25</td>
+                                <td>$320,800</td>
+                            </tr>
+                            <tr>
+                                <td>Garrett Winters</td>
+                                <td>Accountant</td>
+                                <td>Tokyo</td>
+                                <td>63</td>
+                                <td>2011/07/25</td>
+                                <td>$170,750</td>
+                            </tr>
+                            <tr>
+                                <td>Ashton Cox</td>
+                                <td>Junior Technical Author</td>
+                                <td>San Francisco</td>
+                                <td>66</td>
+                                <td>2009/01/12</td>
+                                <td>$86,000</td>
+                            </tr>
+                            <tr>
+                                <td>Cedric Kelly</td>
+                                <td>Senior Javascript Developer</td>
+                                <td>Edinburgh</td>
+                                <td>22</td>
+                                <td>2012/03/29</td>
+                                <td>$433,060</td>
+                            </tr>
+                            <tr>
+                                <td>Airi Satou</td>
+                                <td>Accountant</td>
+                                <td>Tokyo</td>
+                                <td>33</td>
+                                <td>2008/11/28</td>
+                                <td>$162,700</td>
+                            </tr>
+                            <tr>
+                                <td>Brielle Williamson</td>
+                                <td>Integration Specialist</td>
+                                <td>New York</td>
+                                <td>61</td>
+                                <td>2012/12/02</td>
+                                <td>$372,000</td>
+                            </tr>
+                            <tr>
+                                <td>Herrod Chandler</td>
+                                <td>Sales Assistant</td>
+                                <td>San Francisco</td>
+                                <td>59</td>
+                                <td>2012/08/06</td>
+                                <td>$137,500</td>
+                            </tr>
+                            <tr>
+                                <td>Rhona Davidson</td>
+                                <td>Integration Specialist</td>
+                                <td>Tokyo</td>
+                                <td>55</td>
+                                <td>2010/10/14</td>
+                                <td>$327,900</td>
+                            </tr>
+                            <tr>
+                                <td>Colleen Hurst</td>
+                                <td>Javascript Developer</td>
+                                <td>San Francisco</td>
+                                <td>39</td>
+                                <td>2009/09/15</td>
+                                <td>$205,500</td>
+                            </tr>
+                            <tr>
+                                <td>Sonya Frost</td>
+                                <td>Software Engineer</td>
+                                <td>Edinburgh</td>
+                                <td>23</td>
+                                <td>2008/12/13</td>
+                                <td>$103,600</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                </div>
+                <div id="tabs-3">
+                    <p>
+                        <br><br>
+                        Choose Prferences<br><br>
+                        <form action="" method="post">
+                            <select name="cars">
+                                <option value="volvo">Volvo</option>
+                                <option value="saab">Saab</option>
+                                <option value="fiat">Fiat</option>
+                                <option value="audi">Audi</option>
+                            </select>
+                            <input type="date" id="date" name="date">
+                            <br><br>
+                            <input type="submit" id="save" name="save" value="Save">
+                            <input type="reset" id="reset" name="reset" value="Reset">
+                        </form>
+                    </p>
+                </div>
+            </div>
+            <div id="aboutUs" style="width:90%;margin:auto;">
+                <br><br><br>
+                This application has been developed by a group of six students as a part of  the CSE 542 Software Engineering Concepts project.<br><br>
+                The team members are -<br><br>
+                Saptarshi Bhattacharjee<br>
+                Akash Deshpande<br>
+                Srinivasan Rajappa<br>
+                Sagar Dulhani<br>
+                Abhimat Varma<br>
+                Aniket Deole<br><br>
+                Please reach out at saptarsh@buffalo.edu or aniketma@buffalo.edu for further details about the application, how to, FAQs.
+            </div>
+            <div class="footer" id="footer">
+                Court Case Schedule Viewer Version x.y.z
+            </div>
+            
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.mmenu.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="js/dataTables.jqueryui.min.js"></script>
+        <script type="text/javascript">
+            $("#li1").click(function(){
+                $("#tabs").show();
+                $("#tabs-2").hide();
+                $("#tabs-3").hide();
+                $("#aboutUs").hide();
+                $("#tabs-1").show();
+            });
+            $("#li2").click(function(){
+                $("#tabs").show();
+                $("#tabs-1").hide();
+                $("#tabs-3").hide();
+                $("#aboutUs").hide();
+                $("#tabs-2").show();
+            });
+            $("#li3").click(function(){
+                $("#tabs").show();
+                $("#tabs-2").hide();
+                $("#tabs-1").hide();
+                $("#aboutUs").hide();
+                $("#tabs-3").show();
+            });
+            $("#li4").click(function(){
+                $("#tabs").hide();
+                $("#aboutUs").show();
+                
+            });
+            $(function() {
+                $( "#datepicker" ).datepicker();
+            });
+            $(function() {
+                $( "#tabs" ).tabs();
+            });
+            $(function() {
+                $('nav#menu-left').mmenu();
+            });
+            $(document).ready(function() {
+                $('#scheduleTable').DataTable();
+            });
+        </script>
+        <script type="text/javascript">
+            app.initialize();
+            $("#aboutUs").hide();
+        </script>
+    </body>
+</html>
