@@ -82,9 +82,6 @@ def storeBody(bodyText):
 
 def extractBodyText(row):
 	datas = row.findChildren('tr')
-
-	# pp1 = pprint.PrettyPrinter(indent=4)
-	# pp1.pprint(datas)
 	num = 0;
 	for data in datas:
 		rowData = storeRowData(data)
@@ -96,25 +93,17 @@ def extractBodyText(row):
 	pp.pprint(bodyData)
             
 def storeRowData(data):
-	# print "PRINTING RAW DATA"
-	# print data.prettify()
 	elem = data.findChildren('td')
 	count = 0;
 	dataSet = {'SLNO':'', 'CASENO':'', 'PARTY':'', 'PETADV':'', 'RESADV':''}
 	for e in elem:
 		# print "COUNT = ", count%5
 		currKey = keyMap[str(count%5)]
-		dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line","").replace ("/pre-line>","")
+		dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
 		if e.has_attr("colspan"):
 			count = count + int(e['colspan'])
 		else:
 			count = count + 1
-		
-		# print "COUNT = ", count%5
-
-	# print "PRINTING DATASET"	
-	# pp = pprint.PrettyPrinter(indent=4)
-	# pp.pprint(dataSet)
 	return dataSet
 
 
