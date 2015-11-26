@@ -5,13 +5,18 @@ import re
 from collections import defaultdict
 import pprint
 from datetime import date
+import sys
+
 
 headerData = {}
 bodyData = []
 keyMap = {'0' : 'SLNO', '1' : 'CASENO', '2' : 'PARTY', '3' : 'PETADV', '4' : 'RESADV'}
 
-def scrapehelper():
-    daemon = raw_input ("Daemon format (y/n): ")
+def scrapehelper(argv):
+    if len (argv) == 1:
+        daemon = "y"
+    else:
+        daemon = "n"
     if daemon == "n":
         testOrScrape = raw_input ("Use sample file for testing (y/n):")
         if testOrScrape == "n":
@@ -33,18 +38,34 @@ def scrapehelper():
             sample = open ('sample.html', 'r')
             parseHTMLtoJSON(sample.read ())
     else:
-        today = date.today ()
-        r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
-        sessionID = r0.headers['Set-Cookie'].split('=', 1)[1].split(';')[0]
+        if argv[0] == "sample":
+            sample = open ('sample.html', 'r')
+            parseHTMLtoJSON(sample.read ())
+            #sending predefined json to web service for now.
+            json_file = open ('json_sample', 'r')
+            json_data = json_file.read ()
+            print json_data
+            r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
 
-        sessionIDString = "PHPSESSID="+sessionID
-        r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
-        todayString = today.strftime ('%d-%m-%Y')
-        r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": todayString, "q":""})
-        courtNos = getAvailableCourts (r2.text)
-        for court in courtNos:
-            r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":court.text,"court_wise_submit":"Submit","q":""})
-            parseHTMLtoJSON(r3.text)
+        else:
+            today = date.today ()
+            r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
+            sessionID = r0.headers['Set-Cookie'].split('=', 1)[1].split(';')[0]
+
+            sessionIDString = "PHPSESSID="+sessionID
+            r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
+            todayString = today.strftime ('%d-%m-%Y')
+            r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": todayString, "q":""})
+            courtNos = getAvailableCourts (r2.text)
+            for court in courtNos:
+                r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":court.text,"court_wise_submit":"Submit","q":""})
+                parseHTMLtoJSON(r3.text)
+
+            #sending predefined json to web service for now.
+            json_file = open ('json_sample', 'r')
+            json_data = json_file.read ()
+            print json_data
+            r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
 
         
 
@@ -64,7 +85,7 @@ def parseHTMLtoJSON(htmlText):
 	tables = soup.findChildren('table')
 #	print len(tables)
 	storeHeader(tables[0])
-#	storeBody(tables)
+	storeBody(tables)
 
 
 def storeBody(bodyText):
@@ -83,9 +104,11 @@ def extractBodyText(row):
 		bodyData.insert(num, rowData)
 		num = num + 1
 
-	print "PRINTING DATASET"	
 	pp = pprint.PrettyPrinter(indent=4)
-	pp.pprint(bodyData)
+	#pp.pprint(bodyData)
+        pprinted = pp.pformat (bodyData)
+#        print pprinted
+
             
 def storeRowData(data):
 	# print "PRINTING RAW DATA"
@@ -96,8 +119,7 @@ def storeRowData(data):
 	for e in elem:
 		# print "COUNT = ", count%5
 		currKey = keyMap[str(count%5)]
-		dataSet[currKey] += "&&&&" + str(e.find('pre-line'))
-
+		dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line","").replace ("/pre-line>","")
 		if e.has_attr("colspan"):
 			count = count + int(e['colspan'])
 		else:
@@ -129,4 +151,4 @@ def storeHeader(headerText):
         print "-----"
 
 if __name__ == '__main__':
-	scrapehelper()
+    scrapehelper(sys.argv[1:])
