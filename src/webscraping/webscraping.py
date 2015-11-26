@@ -39,13 +39,14 @@ def scrapehelper(argv):
             parseHTMLtoJSON(sample.read ())
     else:
         if argv[0] == "sample":
-            sample = open ('sample.html', 'r')
+            print "Reading from sample"
+            sample = open ('mySample.html', 'r')
             parseHTMLtoJSON(sample.read ())
             #sending predefined json to web service for now.
             json_file = open ('json_sample', 'r')
             json_data = json_file.read ()
-            print json_data
-            r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
+            # print json_data
+            # r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
 
         else:
             today = date.today ()
@@ -81,63 +82,70 @@ def getAvailableCourts (htmlText):
     return options
 
 def parseHTMLtoJSON(htmlText):
-	soup = BeautifulSoup(htmlText, 'html.parser')
-	tables = soup.findChildren('table')
-#	print len(tables)
-	storeHeader(tables[0])
-	storeBody(tables)
+    soup = BeautifulSoup(htmlText, 'html.parser')
+    allTables = soup.findChildren('table')
+    # print tables
+    storeHeader(allTables[0])
+    bodyTables = soup.findChildren('table', {'class':'style3'})
+    storeBody(bodyTables)
 
 
 def storeBody(bodyText):
-    for body in range(1,2):#len(bodyText)
+    # print "Body Length = ", len(bodyText)
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint (bodyText)
+    for body in range(1,len(bodyText)):#len(bodyText)
         extractBodyText(bodyText[body])
 
-def extractBodyText(row):
-	datas = row.findChildren('tr')
-	num = 0;
-	for data in datas:
-		rowData = storeRowData(data)
-		# print rowData
-		bodyData.insert(num, rowData)
-		num = num + 1
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(bodyData)
 
-	pp = pprint.PrettyPrinter(indent=4)
-	#pp.pprint(bodyData)
-        pprinted = pp.pformat (bodyData)
-#        print pprinted
+def extractBodyText(row):
+    datas = row.findChildren('table')
+    num = 0;
+    for data in datas:
+        rowData = storeRowData(data)
+        print "+++++++"
+        print "Printing table No = ", num
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(rowData)
+        bodyData.insert(num, rowData)
+        num = num + 1
+
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pprinted = pp.pformat (bodyData)
 
             
 def storeRowData(data):
-	elem = data.findChildren('td')
-	count = 0;
-	dataSet = {'SLNO':'', 'CASENO':'', 'PARTY':'', 'PETADV':'', 'RESADV':''}
-	for e in elem:
-		# print "COUNT = ", count%5
-		currKey = keyMap[str(count%5)]
-		dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
-		if e.has_attr("colspan"):
-			count = count + int(e['colspan'])
-		else:
-			count = count + 1
-	return dataSet
+    elem = data.findChildren('td')
+    count = 0;
+    dataSet = {'SLNO':'', 'CASENO':'', 'PARTY':'', 'PETADV':'', 'RESADV':''}
+    for e in elem:
+        currKey = keyMap[str(count%5)]
+        dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
+        if e.has_attr("colspan"):
+            count = count + int(e['colspan'])
+        else:
+            count = count + 1
+    return dataSet
 
 
 
 def storeHeader(headerText):
-	children = headerText.find('td')
-	contentText = re.sub('<[^<]+?>', '&&&', children.renderContents().strip()).split('&&&')
-	courtNo = contentText[0].split(' ')[2].strip()
-	justice1 = contentText[1].strip()
-	justice2 = contentText[2].strip()
+    children = headerText.find('td')
+    contentText = re.sub('<[^<]+?>', '&&&', children.renderContents().strip()).split('&&&')
+    courtNo = contentText[0].split(' ')[2].strip()
+    justice1 = contentText[1].strip()
+    justice2 = contentText[2].strip()
 
-	headerData["CourtNo"] = courtNo
-	headerData["Justice1"] = justice1
-	headerData["Justice2"] = justice2
+    headerData["CourtNo"] = courtNo
+    headerData["Justice1"] = justice1
+    headerData["Justice2"] = justice2
         
-        print "Court No: ", courtNo
-        print "Justice 1: ", justice1
-        print "Justice 2: ", justice2
-        print "-----"
+    print "Court No: ", courtNo
+    print "Justice 1: ", justice1
+    print "Justice 2: ", justice2
+    print "-----"
 
 if __name__ == '__main__':
     scrapehelper(sys.argv[1:])
