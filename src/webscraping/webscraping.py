@@ -92,28 +92,25 @@ def parseHTMLtoJSON(htmlText):
 
 def storeBody(bodyText):
     # print "Body Length = ", len(bodyText)
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint (bodyText)
-    for body in range(1,len(bodyText)):#len(bodyText)
-        extractBodyText(bodyText[body])
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pp.pprint (bodyText)
+    num = 0;
+    for body in range(0,len(bodyText)):#len(bodyText)
+        rowData = extractBodyText(bodyText[body])
+        bodyData.insert(num, rowData)
+        num = num + 1
 
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(bodyData)
 
 def extractBodyText(row):
-    datas = row.findChildren('table')
-    num = 0;
-    for data in datas:
-        rowData = storeRowData(data)
-        print "+++++++"
-        print "Printing table No = ", num
-        pp = pprint.PrettyPrinter(indent=4)
-        pp.pprint(rowData)
-        bodyData.insert(num, rowData)
-        num = num + 1
-
+    # print "----------------NEW ROW---------------------"
+    rowData = storeRowData(row)
     # pp = pprint.PrettyPrinter(indent=4)
-    # pprinted = pp.pformat (bodyData)
+    # pp.pprint(row)
+    # print "++++++++++++++++PARSED DATA++++++++++++++++"
+    # pp.pprint(rowData)
+    return rowData
 
             
 def storeRowData(data):
@@ -122,7 +119,10 @@ def storeRowData(data):
     dataSet = {'SLNO':'', 'CASENO':'', 'PARTY':'', 'PETADV':'', 'RESADV':''}
     for e in elem:
         currKey = keyMap[str(count%5)]
-        dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
+        if (dataSet[currKey] != ''):
+            dataSet[currKey] += " | " + str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
+        else:
+            dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
         if e.has_attr("colspan"):
             count = count + int(e['colspan'])
         else:
