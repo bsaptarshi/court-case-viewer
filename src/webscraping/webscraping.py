@@ -41,6 +41,12 @@ def scrapehelper(argv):
         if argv[0] == "sample":
             sample = open ('sample.html', 'r')
             parseHTMLtoJSON(sample.read ())
+            #sending predefined json to web service for now.
+            json_file = open ('json_sample', 'r')
+            json_data = json_file.read ()
+            print json_data
+            r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
+
         else:
             today = date.today ()
             r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
@@ -54,6 +60,12 @@ def scrapehelper(argv):
             for court in courtNos:
                 r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":court.text,"court_wise_submit":"Submit","q":""})
                 parseHTMLtoJSON(r3.text)
+
+            #sending predefined json to web service for now.
+            json_file = open ('json_sample', 'r')
+            json_data = json_file.read ()
+            print json_data
+            r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
 
         
 
@@ -90,7 +102,10 @@ def extractBodyText(row):
 		num = num + 1
 
 	pp = pprint.PrettyPrinter(indent=4)
-	pp.pprint(bodyData)
+	#pp.pprint(bodyData)
+        pprinted = pp.pformat (bodyData)
+#        print pprinted
+
             
 def storeRowData(data):
 	elem = data.findChildren('td')
