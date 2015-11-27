@@ -95,150 +95,73 @@ def getAvailableCourts (htmlText):
 def parseHTMLtoJSON(htmlText):
     soup = BeautifulSoup(htmlText, 'html.parser')
     allTables = soup.findChildren('table')
-    # print tables
     storeHeader(allTables[0])
     bodyTables = soup.findChildren('table', {'class':'style3'})
     storeBody(bodyTables)
 
 
 def storeBody(bodyText):
-    # print "Body Length = ", len(bodyText)
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint (bodyText)
     num = 0;
     for body in range(0,len(bodyText)):#len(bodyText)
         extractBodyText(bodyText[body])
-        # bodyData.insert(num, rowData)
-        # num = num + 1
 
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(bodyData)
-    # convertToJSON(bodyData)
-
-    # print "--------------------------FINAL CASEDATA---------------------------------"
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(caseData) 
-
-    print "-------FINAL TEMPDATASET---------"
     tempDataSet['serial'] = slNo
-    print tempDataSet
-    convertAndStoreToJSON(tempDataSet, "last")
+    convertAndStoreToJSON(tempDataSet)
 
     print "--------------------------FINAL CASEDATA---------------------------------"
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(caseData) 
-    # print caseData
 
 def extractBodyText(row):
-    # print "----------------NEW ROW---------------------"
-    # print row
-    # rowData = storeRowData(row)
     children = row.findChildren('tr')
     caseNo = ''
     serialNo = ''
     for child in children:
-        newData = parseChildren(child)
-        # print "++++++++++++++++PARSED DATA++++++++++++++++"
-        # print newData
-    # print children
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(row)
-    # print "++++++++++++++++PARSED DATA++++++++++++++++"
-    # pp.pprint(rowData)
-    # return rowData
+        parseChildren(child)
 
 
 def parseChildren(data):
     elem = data.findChildren('td')
     if not elem:
-        print "empty list"
         return
 
-    # print "---------------------New Child--------------------------"
-    # print data
     count = 0;
     global caseNumber
     global cNo
     global slNo
     global serialNumber
     global tempDataSet
-    dataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
-
-
-
-    # if (cNo != caseNumber and cNo != '-1'):
-    #     print "Different Case Number Found--------------Dataset------------------"
-    #     print "new case -----> "+cNo+", old case -----> ", caseNumber
-    #     cNo = caseNumber
-    #     # print "Different Case Number Found--------------Dataset------------------"
-    #     # print "Serial Number = ", slNo
-    #     dataSet['serial'] = slNo
-    #     tempDataSet['serial'] = slNo
-    #     # print dataSet
-    #     convertAndStoreToJSON(tempDataSet)
-    #     tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
-
-
-
+    # dataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 
     for e in elem:
         currKey = keyMap[str(count%5)]
         elemText = str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
-        # print "elem text = "+elemText+", currkey = "+currKey
 
         if (currKey == 'case_no'):
             if (cNo == '-1'):
-                # print "Updating Case Number for the first time"
                 cNo = elemText
-            # if (((elemText != 'None') or (elemText != '\xc2\xa0')) and (elemText != serialNumber)):
-            #     serialNumber = elemText
-            # print "------------------> ELEMTEXT = ", elemText
             if (elemText != caseNumber and elemText != "None" and elemText != "\xc2\xa0"):
-                # print ("updating old case no "+caseNumber+" with "+elemText)
                 caseNumber = elemText
-                # print "--------------Dataset------------------"
-                # print dataSet
-            # print "------------------> CASE NUMBER = ", caseNumber
         
         if (cNo != caseNumber and cNo != '-1'):
-            # print "Different Case Number Found--------------Dataset------------------"
-            # print "new case -----> "+caseNumber+", old case -----> ", cNo
             cNo = caseNumber
-            # print "Different Case Number Found--------------Dataset------------------"
-            # print "Serial Number = ", slNo
-            dataSet['serial'] = slNo
             tempDataSet['serial'] = slNo
-            # print dataSet
 
             if (tempDataSet['petitionar_advocates'] != ""):
-                convertAndStoreToJSON(tempDataSet, "case")
+                convertAndStoreToJSON(tempDataSet)
                 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
-            # convertAndStoreToJSON(tempDataSet, "case")
-            # tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 
         if (currKey == 'serial'):
             if (serialNumber == '-101'):
-                # print "Updating Case Number for the first time"
                 serialNumber = elemText
             if (elemText != slNo and elemText != "None" and elemText != "\xc2\xa0" and elemText != "WITH"):
-                # print ("updating old serial no "+slNo+" with "+elemText)
                 slNo = elemText
-                # print "--------------Dataset------------------"
-                # print dataSet
-            # print "------------------> SERIAL Number = ", slNo
 
         if (serialNumber != slNo and serialNumber != '-101'):
-            print "Different serial Number Found--------------Dataset------------------"
-            print "new serial -----> "+slNo+", old serial -----> ", serialNumber
-            
-            # print "Different Case Number Found--------------Dataset------------------"
-            # print "Serial Number = ", slNo
-            dataSet['serial'] = serialNumber
             tempDataSet['serial'] = serialNumber
             serialNumber = slNo
-            # print tempDataSet['case_no']
             if (tempDataSet['petitionar_advocates'] != ""):
-                convertAndStoreToJSON(tempDataSet, "serial")
+                convertAndStoreToJSON(tempDataSet)
                 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 
         if ((elemText == 'None') or (elemText == '\xc2\xa0')):
@@ -255,27 +178,9 @@ def parseChildren(data):
         else:
             count = count + 1
 
-    # print "dataset[currkey]--->", tempDataSet[currKey]        
-    # if (cNo != caseNumber):
-    #     print "Different Case Number Found--------------Dataset------------------"
-    #     print "new case -----> "+cNo+", old case -----> ", caseNumber
-    #     cNo = caseNumber
-    #     # print "Different Case Number Found--------------Dataset------------------"
-    #     # print "Serial Number = ", slNo
-    #     dataSet['serial'] = slNo
-    #     tempDataSet['serial'] = slNo
-    #     # print dataSet
-          # convertAndStoreToJSON(tempDataSet)
-    #     tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
-
-
-    return dataSet
-
-def convertAndStoreToJSON(data, caller):
+def convertAndStoreToJSON(data):
     data['petitionar_advocates'] = data['petitionar_advocates'].split('<br>')
     data['respondent_advocates'] = data['respondent_advocates'].split('<br>')
-    print "Caller = ", caller
-    print data
     toJson = json.dumps(data)
     caseData.append(toJson)
 
