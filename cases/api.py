@@ -1,5 +1,5 @@
-from cases.models import Cases, CaseFilter, CaseSearch, Court
-from home.api import UserResources
+from cases.models import Cases, CaseFilter, CaseSearch, Court, CasesDay, CaseRelated
+from home.api import UserResources, LawyersResources
 from lawCalender.utils import urlencodeSerializer
 
 from tastypie.resources import ModelResource
@@ -8,11 +8,12 @@ from tastypie.authentication import Authentication
 from tastypie import fields
 
 
-class CasesResources(ModelResource):
-    defendent = fields.ForeignKey(UserResources, 'defendent')
-    respondant = fields.ForeignKey(UserResources, 'respondant')
-    defense_lawyers = fields.ForeignKey(UserResources, 'defense_lawyers')
-    respondant_lawyers = fields.ForeignKey(UserResources, 'respondant_lawyers')
+class CasesResources(ModelResource):  
+    defense_lawyers = fields.ToManyField(LawyersResources, 'defense_lawyers',related_name="defense_lawyers_user",  full=True, null=True, blank=True)
+    respondant_lawyers = fields.ToManyField(LawyersResources, 'respondant_lawyers', related_name="respondant_lawyers_user",full=True, null=True, blank=True)
+     
+    defendent = fields.ToManyField(UserResources, 'defendent',related_name="defendent_user", full=True, null=True, blank=True)
+    respondant = fields.ToManyField(UserResources, 'respondant', related_name="respondant_user", full=True, null=True, blank=True)
     class Meta:
         queryset = Cases.objects.filter()
         resource_name = 'cases'
@@ -36,7 +37,7 @@ class CaseSearchResources(ModelResource):
         always_return_data = True
         
 class CaseFilterResources(ModelResource):
-    search = fields.ForeignKey(CaseSearchResources, 'search')
+    search = fields.ForeignKey(CaseSearchResources, 'search',full=True)
     class Meta:
         queryset = CaseFilter.objects.filter()
         resource_name = 'casefilter'
@@ -51,6 +52,30 @@ class CourtResources(ModelResource):
     class Meta:
         queryset = Court.objects.filter()
         resource_name = 'court'
+        authorization = Authorization()
+        authentication = Authentication()
+        excludes = [ 'datetime']
+        allowed_methods = ['get','post','put','patch']
+        serializer = urlencodeSerializer()
+        always_return_data = True
+
+class CourtDayResources(ModelResource):
+    case = fields.ForeignKey(CasesResources, 'case',full=True)
+    class Meta:
+        queryset = CasesDay.objects.filter()
+        resource_name = 'caseday'
+        authorization = Authorization()
+        authentication = Authentication()
+        excludes = [ 'datetime']
+        allowed_methods = ['get','post','put','patch']
+        serializer = urlencodeSerializer()
+        always_return_data = True
+
+class CaseRelatedResources(ModelResource):
+    primary_case = fields.ForeignKey(CasesResources, 'case',full= True)
+    class Meta:
+        queryset = CaseRelated.objects.filter()
+        resource_name = 'caserelated'
         authorization = Authorization()
         authentication = Authentication()
         excludes = [ 'datetime']

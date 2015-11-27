@@ -5,11 +5,13 @@ import re
 from collections import defaultdict
 import pprint
 from datetime import date
+import json
 import sys
 
 
 headerData = {}
 bodyData = []
+urlBase = "http://localhost:8000"
 keyMap = {'0' : 'SLNO', '1' : 'CASENO', '2' : 'PARTY', '3' : 'PETADV', '4' : 'RESADV'}
 
 def scrapehelper(argv):
@@ -43,9 +45,8 @@ def scrapehelper(argv):
             parseHTMLtoJSON(sample.read ())
             #sending predefined json to web service for now.
             json_file = open ('json_sample', 'r')
-            json_data = json_file.read ()
-            print json_data
-            r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
+            json_data = json.load(json_file)            
+            r = requests.post (urlBase+"/cases/scrape/", data = json.dumps(json_data))
 
         else:
             today = date.today ()

@@ -23,7 +23,7 @@ class UserResources(ModelResource):
   
 
 class JudgeResources(ModelResource):
-    user = fields.ForeignKey(UserResources, 'user')
+    user = fields.ForeignKey(UserResources, 'user',full = True)
     class Meta:
         queryset = Judge.objects.filter()
         resource_name = 'judge'
@@ -34,20 +34,20 @@ class JudgeResources(ModelResource):
         serializer = urlencodeSerializer()
         always_return_data = True
 
-class LawyersResources(ModelResource):
-    user = fields.ForeignKey(UserResources, 'user')
+class LawyersResources(ModelResource):    
+    user = fields.ForeignKey(UserResources, 'user',full = True, null=True, blank=True)
     class Meta:
         queryset = Lawyers.objects.filter()
         resource_name = 'lawyers'
         authorization = Authorization()
-        authentication = Authentication()
-        excludes = [ 'datetime']
+        authentication = Authentication()        
         allowed_methods = ['get','post','put','patch']
         serializer = urlencodeSerializer()
         always_return_data = True
+    
 
 class UserProfileResources(ModelResource):
-    user = fields.ForeignKey(UserResources, 'user')
+    user = fields.ForeignKey(UserResources, 'user',full = True)
     class Meta:
         queryset = UserProfile.objects.filter()
         resource_name = 'userprofile'
