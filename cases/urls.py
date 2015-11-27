@@ -1,11 +1,11 @@
 from django.conf.urls import include, url,patterns
-from cases.api import CaseFilterResources, CaseSearchResources, CourtResources, CasesResources, CourtDayResources, CaseRelatedResources
+from cases.api import CaseFilterResources, CaseSearchResources, CourtResources, CasesResources, CasesDayResources, CaseRelatedResources
 
 case_filter_resource = CaseFilterResources()
 case_search_resource = CaseSearchResources()
 court_resource = CourtResources()
 case_resource = CasesResources()
-case_day_resource = CourtDayResources()
+case_day_resource = CasesDayResources()
 case_related_resource = CaseRelatedResources()
 urlpatterns = patterns('cases.views',
     # Examples:

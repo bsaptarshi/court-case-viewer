@@ -8,6 +8,7 @@ from tastypie.authentication import Authentication
 from tastypie import fields
 
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 
 class UserResources(ModelResource):
    
@@ -20,6 +21,15 @@ class UserResources(ModelResource):
         allowed_methods = ['get','post','put','patch']
         serializer = urlencodeSerializer()
         always_return_data = True
+    def obj_create(self, bundle, request=None, **kwargs):
+        try:
+            bundle = super(UserResources, self).obj_create(bundle)
+            bundle.obj.set_password(bundle.data.get('password'))
+            bundle.obj.save()
+        except IntegrityError:
+            raise BadRequest('Username already exists')
+
+        return bundle
   
 
 class JudgeResources(ModelResource):

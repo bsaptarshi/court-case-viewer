@@ -19,7 +19,6 @@ class Cases(models.Model):
     name = models.CharField(max_length = 200)
     details = models.TextField(null = True, blank = True)
     type = models.CharField(max_length = 200, null = True, blank = True)
-    court = models.ForeignKey(Court)
     defense_lawyers = models.ManyToManyField(Lawyers,related_name="defense_lawyers_user",null = True, blank =  True)
     respondant_lawyers = models.ManyToManyField(Lawyers,related_name = "respondant_lawyers_user",null = True, blank =  True)
     defendent = models.ManyToManyField(User,related_name="defendent_user",null = True, blank =  True)
@@ -30,6 +29,7 @@ class Cases(models.Model):
 
 class CasesDay(models.Model):
     case = models.ForeignKey(Cases)
+    court = models.ForeignKey(Court)
     serial = models.IntegerField()
     date = models.DateField()
     
