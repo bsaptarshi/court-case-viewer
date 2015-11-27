@@ -1,4 +1,10 @@
 $(function(){
+	var username = localStorage.getItem("username");
+	if (username!=null){
+		window.location="home.html";
+		
+	}
+	
 	$("#loginForm").submit(function(event){
 		event.preventDefault();
 		var username = $("#username").val();

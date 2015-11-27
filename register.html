@@ -34,15 +34,18 @@
                 text-align: center;
                 margin: 0 auto;
             }
-        </style>
+        </style>        
+        
+        
+   
     </head>
     <body style="background:white;">
         <div class="header">
             <h2><a href="index.html"><img src="images/arrow.png" align="left"></a>Court Case Schedule Viewer</h2> 
         </div>
         <hr/>
-        <div class="loginForm">
-            <form action="" method="post">
+        <div class="registerForm">
+            <form id = "registerForm" action="" method="post">
                 <input type="text" id="username" name="username" placeholder="Username" required><br/><br/>
                 <input type="password" id="password" name="password" placeholder="Password" required><br/><br/>
                 <input type="text" id="firstName" name="firstName" placeholder="First Name" required><br/><br/>
@@ -51,6 +54,7 @@
                 <input type="submit" id="register" name="register" value="Register">
             </form>
         </div>
+        
         <div class="footer">
             Court Case Schedule Viewer Version x.y.z
         </div>
@@ -58,15 +62,8 @@
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="js/jquery.min.js"></script>
-        <script>
-        $(document).ready(function(){
-            //$("#message").hide();
-            $("#register").click(function(){
-                //$("#message").hide();
-                alert("You have been registered.");
-            });
-        });
-        </script>
+          <script type="text/javascript" src="js/register.js"></script>
+      
         <script type="text/javascript">
             app.initialize();
         </script>

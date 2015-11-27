@@ -49,5 +49,5 @@ var app = {
 };
 
 $(function(){
-    localStorage.setItem("baseUrl","http://10.0.2.2:8000");
+    localStorage.setItem("baseUrl","http://52.24.198.10/");
 })

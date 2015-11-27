@@ -48,10 +48,11 @@
             </div>
             <nav id="menu-left">
                 <ul>
+                	 <li  id="username"></li>
                     <li class="active" id="li1"><a href="#tabs-1">Home</a></li>
                     <li><a href="#tabs-2" id="li2">Schedule</a></li>
                     <li><a href="#tabs-3" id="li3">Preferences</a></li>
-                    <li><a href="#" id="li4">About Us</a></li>
+                    <li id="logout"><a>Log Out</a></li>
                 </ul>
             </nav>
             <div class="header">
@@ -60,31 +61,13 @@
             <hr/><br/>
             <div id="tabs" style="width:90%;margin:auto;font-size:1em;">
                 <ul>
-                    <li><a href="#tabs-1">Home</a>
-                    </li>
+                   
                     <li><a href="#tabs-2">Schedule</a>
                     </li>
                     <li><a href="#tabs-3">Preferences</a>
                     </li>
                 </ul>
-                <div id="tabs-1">
-                    <p><br/>
-                        Welcome to Court Case Schedule Viewer x.y.z.<br/>
-                        Our application will let you vie cases that are  scheduled to go up for hearing on a particular day, and apply  various filters  for selective viewing.
-                    </p>
-                    <br/>
-                    <p>
-                        Switch over to the schedule tab to view cases for a particular day by a particular court.
-                    </p>
-                    <br/>
-                    <p>
-                        The Preference tab allows you to select a particular court, and set a date preference for which cases will be shown.
-                    </p>
-                    <br/>
-                    <p>
-                        <b>Announcements</b></br/>
-                    </p>
-                </div>
+              
                 <div id="tabs-2" style="overflow-x:scroll;">
                     <p><br/>
                     Schedule For <input type="text" id="datepicker"><br/><br/>
@@ -110,9 +93,7 @@
                             </tr>
                         </tfoot>
                         <tbody id="tableData">
-                            <tr>
-                               
-                            </tr>
+                          
                            
                         </tbody>
                     </table>
@@ -154,13 +135,19 @@
             </div>
             
         </div>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>       
         <script src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript" src="js/jquery.mmenu.js"></script>
         <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="js/home.js"></script>
         <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="js/dataTables.jqueryui.min.js"></script>
-        <script src="js/home.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+         
+        
+        
     </body>
 </html>
