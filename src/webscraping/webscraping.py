@@ -14,7 +14,6 @@ bodyData = []
 keyMap = {'0' : 'serial', '1' : 'case_no', '2' : 'party', '3' : 'petitionar_advocates', '4' : 'respondent_advocates'}
 toJSONMap = {'serial' : 'serial', 'case_no' : 'case_no', 'party' : 'party', 'petitionar_advocates' : 'petitionar_advocates', 'respondent_advocates' : 'respondent_advocates'}
 
-# serialNumber = 'NONE'
 caseNumber = 'ABCD'
 cNo = '-1'
 slNo = '-1'
@@ -131,7 +130,6 @@ def parseChildren(data):
     global slNo
     global serialNumber
     global tempDataSet
-    # dataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 
     for e in elem:
         currKey = keyMap[str(count%5)]
@@ -203,5 +201,4 @@ def storeHeader(headerText):
     print "-----"
 
 if __name__ == '__main__':
-    # print "serial = ", serialNumber
     scrapehelper(sys.argv[1:])
