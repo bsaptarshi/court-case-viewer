@@ -6,11 +6,20 @@ from collections import defaultdict
 import pprint
 from datetime import date
 import sys
+import json
 
 
 headerData = {}
 bodyData = []
-keyMap = {'0' : 'SLNO', '1' : 'CASENO', '2' : 'PARTY', '3' : 'PETADV', '4' : 'RESADV'}
+keyMap = {'0' : 'serial', '1' : 'case_no', '2' : 'party', '3' : 'petitionar_advocates', '4' : 'respondent_advocates'}
+toJSONMap = {'serial' : 'serial', 'case_no' : 'case_no', 'party' : 'party', 'petitionar_advocates' : 'petitionar_advocates', 'respondent_advocates' : 'respondent_advocates'}
+
+# serialNumber = 'NONE'
+caseNumber = 'ABCD'
+cNo = '-1'
+slNo = '-1'
+
+caseData = []
 
 def scrapehelper(argv):
     if len (argv) == 1:
@@ -100,34 +109,126 @@ def storeBody(bodyText):
         bodyData.insert(num, rowData)
         num = num + 1
 
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pp.pprint(bodyData)
+    # convertToJSON(bodyData)
+
+    print "--------------------------FINAL CASEDATA---------------------------------"
     pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(bodyData)
+    pp.pprint(caseData) 
+    # print caseData
 
 def extractBodyText(row):
     # print "----------------NEW ROW---------------------"
     rowData = storeRowData(row)
+    children = row.findChildren('tr')
+    caseNo = ''
+    serialNo = ''
+    for child in children:
+        newData = parseChildren(child, caseNo, serialNo)
+        # print "++++++++++++++++PARSED DATA++++++++++++++++"
+        # print newData
+    # print children
     # pp = pprint.PrettyPrinter(indent=4)
     # pp.pprint(row)
     # print "++++++++++++++++PARSED DATA++++++++++++++++"
     # pp.pprint(rowData)
     return rowData
 
-            
+
+def parseChildren(data, caseNo, serialNo):
+    elem = data.findChildren('td')
+    if not elem:
+        print "empty list"
+        return
+
+    # print "---------------------New Child--------------------------"
+    # print data
+    count = 0;
+    global caseNumber
+    global cNo
+    global slNo
+    dataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
+    for e in elem:
+        currKey = keyMap[str(count%5)]
+        elemText = str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
+
+        if (currKey == 'case_no'):
+            # if (((elemText != 'None') or (elemText != '\xc2\xa0')) and (elemText != serialNumber)):
+            #     serialNumber = elemText
+            # print "------------------> ELEMTEXT = ", elemText
+            if (elemText != caseNumber and elemText != "None" and elemText != "\xc2\xa0"):
+                # print ("updating old case no "+caseNumber+" with "+elemText)
+                caseNumber = elemText
+                # print "--------------Dataset------------------"
+                # print dataSet
+            # print "------------------> CASE NUMBER = ", caseNumber
+        
+        if (currKey == 'serial'):
+            if (elemText != slNo and elemText != "None" and elemText != "\xc2\xa0" and elemText != "WITH"):
+                # print ("updating old serial no "+slNo+" with "+elemText)
+                slNo = elemText
+                # print "--------------Dataset------------------"
+                # print dataSet
+            # print "------------------> SERIAL Number = ", slNo
+
+        if ((elemText == 'None') or (elemText == '\xc2\xa0')):
+            # if (currKey == 'serial'):
+            #     print elemText
+            count = count + 1
+            continue
+        if (dataSet[currKey] != ''):
+            dataSet[currKey] += " | " + elemText
+        else:
+            dataSet[currKey] += elemText
+        if e.has_attr("colspan"):
+            count = count + int(e['colspan'])
+        else:
+            count = count + 1
+
+    if (cNo != caseNumber):
+        cNo = caseNumber
+        # print "Different Case Number Found--------------Dataset------------------"
+        # print "Serial Number = ", slNo
+        dataSet['serial'] = slNo
+        # print dataSet
+        convertAndStoreToJSON(dataSet)
+
+    return dataSet
+
+
 def storeRowData(data):
     elem = data.findChildren('td')
     count = 0;
-    dataSet = {'SLNO':'', 'CASENO':'', 'PARTY':'', 'PETADV':'', 'RESADV':''}
+    dataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
     for e in elem:
         currKey = keyMap[str(count%5)]
+        elemText = str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
+
+        # if (currKey == 'serial'):
+        #     if (((elemText != 'None') or (elemText != '\xc2\xa0')) and (elemText != serialNumber)):
+        #         serialNumber = elemText
+        #         print "SERIAL  NUMBER = ", serialNumber
+        if ((elemText == 'None') or (elemText == '\xc2\xa0')):
+            # if (currKey == 'serial'):
+            #     print elemText
+            count = count + 1
+            continue
         if (dataSet[currKey] != ''):
-            dataSet[currKey] += " | " + str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
+            dataSet[currKey] += " | " + elemText
         else:
-            dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
+            dataSet[currKey] += elemText
         if e.has_attr("colspan"):
             count = count + int(e['colspan'])
         else:
             count = count + 1
     return dataSet
+
+def convertAndStoreToJSON(data):
+    data['petitionar_advocates'] = data['petitionar_advocates'].split('<br>')
+    data['respondent_advocates'] = data['respondent_advocates'].split('<br>')
+    toJson = json.dumps(data)
+    caseData.append(toJson)
 
 
 
@@ -148,4 +249,5 @@ def storeHeader(headerText):
     print "-----"
 
 if __name__ == '__main__':
+    # print "serial = ", serialNumber
     scrapehelper(sys.argv[1:])
