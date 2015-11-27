@@ -8,10 +8,9 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
         <link rel="stylesheet" type="text/css" href="css/index.css" />
         <title>Court Case Schedule Viewer</title>
-
         <style type="text/css">
             .header{
-                background-color: white;
+                background-color: white; 
                 height: 5%
                 text-align:center;
                 padding:3% 0% 0% 0%;
@@ -26,11 +25,7 @@
             }
             h2{
                 text-align: center;
-                font-size: 2.25em;
-            }
-            h6{
-              font-size: 0.5em;
-              font-family: monospace;
+                font-size: 18px;
             }
             .loginForm{
                 position:absolute;             /* position in the center of the screen */
@@ -43,21 +38,21 @@
     </head>
     <body style="background:white;">
         <div class="header">
-            <h2>Court Case Schedule Viewer</h2>
+            <h2>Court Case Schedule Viewer</h2> 
         </div>
         <hr/>
         <div class="loginForm">
-            <form action="" method="post">
-                <input type="text" id="username" name="username" placeholder="Username"><br/><br/>
-                <input type="password" id="password" name="password" placeholder="Password"><br/><br/>
+            <form action="home.html" method="post">
+                <input type="text" id="username" name="username" placeholder="Username" required><br/><br/>
+                <input type="password" id="password" name="password" placeholder="Password" required><br/><br/>
                 <a href="register.html">Register</a>&nbsp;&nbsp;<a href="forgotPassword.html">Forgot Password?</a><br/><br/>
                 <input type="submit" id="login" name="login" value="Login">
             </form>
         </div>
         <div class="footer">
-            <h6>Court Case Schedule Viewer Version x.y.z</h6>
+            Court Case Schedule Viewer Version x.y.z
         </div>
-        <a href="homePage.html"> <img src="/images/arrow1.png" alt= "Search Page (GUEST MODE)" > </a>
+
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
         <script type="text/javascript">
