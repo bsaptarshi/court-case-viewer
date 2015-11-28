@@ -2,9 +2,10 @@ from lawCalender.utils import urlencodeSerializer
 from home.models import Judge, Lawyers, UserProfile
 
 
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
 from tastypie.authorization import Authorization
 from tastypie.authentication import Authentication
+from tastypie.exceptions import BadRequest
 from tastypie import fields
 
 from django.contrib.auth.models import User
