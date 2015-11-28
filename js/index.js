@@ -49,5 +49,5 @@ var app = {
 };
 
 $(function(){
-    localStorage.setItem("baseUrl","http://52.24.198.10/");
+    localStorage.setItem("baseUrl","http://52.24.198.10");
 })

@@ -2,11 +2,13 @@
 $(function(){
 	$("#username").append("<a>"+localStorage.getItem("username")+"</a>");
 	
-    loadData($.datepicker.formatDate('yy-mm-dd', new Date()),10);
+    loadData($.datepicker.formatDate('yy-mm-dd', new Date()),100);
 
     function loadData(date,limit){
     	$("#tableData").text("");
         var url = localStorage.getItem("baseUrl")+"/cases/api/caseday/?format=json&date="+date+"&limit="+limit.toString();   
+        
+      
         $.ajax({
   		  type: "GET",
   		  url: url,  		 
@@ -59,8 +61,9 @@ $(function(){
         	});
         }
         
-        function error(data){
-        	alert("error while loading data");
+        function error(jqXHR,error, errorThrown){
+        	 alert(jqXHR.responseText); 
+        	
         }
     }
     
@@ -72,7 +75,7 @@ $(function(){
     $( "#datepicker" ).datepicker({
     	  dateFormat: "yy-mm-dd",
     	  onSelect: function(dateText) {
-          	loadData(dateText,10);
+          	loadData(dateText,100);
           }
     	});
     

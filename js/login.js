@@ -9,7 +9,9 @@ $(function(){
 		event.preventDefault();
 		var username = $("#username").val();
 		var password = $("#password").val();
-		var url = localStorage.getItem("baseUrl")+"/home/login/";		
+		
+		var url = localStorage.getItem("baseUrl")+"/home/login/";
+		
 		var data  = {"username":username,"password":password};
 		$.ajax({
 		  type: "POST",
