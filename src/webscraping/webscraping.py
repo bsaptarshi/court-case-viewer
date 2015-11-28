@@ -184,9 +184,9 @@ def parseChildren(data):
             count = count + 1
 
 def formatCaseData(data):
-    if type(data['petitionar_advocates']) == 'str':
+    if type(data['petitionar_advocates']) is str:
         data['petitionar_advocates'] = data['petitionar_advocates'].split('<br>')
-    if type(data['respondent_advocates']) == 'str':
+    if type(data['respondent_advocates']) is str:
         data['respondent_advocates'] = data['respondent_advocates'].split('<br>')
     caseData.append(data)
 
