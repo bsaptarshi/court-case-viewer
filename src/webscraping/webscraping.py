@@ -21,8 +21,6 @@ serialNumber = '-101'
 
 caseData = []
 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
-# finalData = {'date' : '', 'courts' : ''}
-# finalDataToJSON = ''
 dateOfData = ''
 
 finalNormalData = {'date' : '', 'courts' : ''}
@@ -88,16 +86,11 @@ def scrapehelper(argv):
             for court in courtNos:
                 r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":court.text,"court_wise_submit":"Submit","q":""})
                 parseHTMLtoJSON(r3.text)
-            #sending predefined json to web service for now.
-            # json_file = open ('json_sample', 'r')
-            # json_data = json_file.read ()
-            # print json_data
-            # Access finalDataToJSON var to get the final data in JSON form
-            # print finalDataToJSON
+
             finalJSONData = json.dumps(finalNormalData)
             print "--------FINAL JSON DATA---------"
-            print finalNormalData
-            # r = requests.post ("url", data={"body": finalDataToJSON, "date":"25-11-2015", "court":"13"})
+            print finalJSONData
+            r = requests.post ("url", data={"body": finalJSONData, "date":"25-11-2015", "court":"13"})
 
         
 
@@ -131,10 +124,7 @@ def storeBody(bodyText):
 
     tempDataSet['serial'] = slNo
     formatCaseData(tempDataSet)
-    # renderFullJSON()
     renderCaseJSON()
-    # print "--------FINAL NORMAL DATA---------"
-    # print finalNormalData
 
 def extractBodyText(row):
     children = row.findChildren('tr')
@@ -220,28 +210,7 @@ def storeHeader(headerText):
     headerData["CourtNo"] = courtNo
     headerData["Justice1"] = justice1
     headerData["Justice2"] = justice2
-        
-    print "Court No: ", courtNo
-    print "Justice 1: ", justice1
-    print "Justice 2: ", justice2
-    print "-----"
 
-# def renderFullJSON():
-#     global finalDataToJSON
-#     global finalData
-#     tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
-#     tempFinalData['court_no'] = headerData["CourtNo"]
-#     tempFinalData['judge'] = headerData["Justice1"] + "<br>" +headerData["Justice2"]
-#     tempFinalData['case'] = caseData
-#     finalData['date'] = dateOfData
-#     finalData['courts'] = {'court' : ''}
-#     finalData['courts']['court'] = tempFinalData
-#     tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
-#     finalDataToJSON = json.dumps(finalData)
-
-#     # print "--------------------------FINAL JSONDATA---------------------------------"
-#     # pp = pprint.PrettyPrinter(indent=4)
-#     # pp.pprint(finalDataToJSON)
 
 def renderCaseJSON():
     global finalNormalData
