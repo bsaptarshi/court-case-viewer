@@ -2,7 +2,7 @@ from lxml import html
 import requests
 from bs4 import BeautifulSoup
 import re
-from datetime import date
+from datetime import date, timedelta
 import sys
 import json
 
@@ -68,7 +68,7 @@ def scrapehelper(argv):
             print r.text
 
         else:
-            today = date.today ()
+            today = date.today() - timedelta(days=2)
             r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
             sessionID = r0.headers['Set-Cookie'].split('=', 1)[1].split(';')[0]
 

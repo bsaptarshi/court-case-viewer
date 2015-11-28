@@ -2,7 +2,6 @@ from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
-
 from cases.models import Cases, Court, CasesDay, COURT_CHOICES
 from home.models import Judge, Lawyers, LAWYER_CHOICES, JUDGE_CHOICES
 import json, datetime 
@@ -15,22 +14,29 @@ def webScraping(request):
         #print data
         court_no = None
         todaysDate = None
-        data = request.body
+        data = request.body       
         data = data.replace("<br>"," ")
         data = data.replace("</br>"," ")
         data = json.loads(data)
         data = ast.literal_eval(data)
+        print data
         for k,v in data.items():  
+                
             if k == "date":
                 todaysDate = datetime.datetime.strptime(v, "%d-%m-%Y").date()
-            if k == "courts":         
-                
-                for key,court_cases in v.items():
-                   
-                    for key1,court in court_cases.items():                        
-                        print key1,court," deshpande"
+            if k == "courts":                         
+                for key,court_cases in v.items():    
+                    judgeList = []       
+                    caseObjectList = []        
+                    for key1,court in court_cases.items():    
+                                                             
                         if key1=="judge":
-                            print court
+                            
+                            for c in court.split("HON'BLE MR. JUSTICE"):
+                                judgeObject = createJudge( createJudgeUSer(c))
+                                judgeObject.save()
+                                judgeList.append(judgeObject)
+                           
                         if key1=="court_no":                                                      
                             court_no =  court                        
                             try:
@@ -38,7 +44,8 @@ def webScraping(request):
                             except ObjectDoesNotExist:
                                 courtObject = Court.objects.create(number = court_no,type =COURT_CHOICES[0][0]) 
                         if key1=="case":                                           
-                            for case in court:                                                               
+                            for case in court:   
+                                print case                                                            
                                 serial =  case['serial']
                                 case_no =  case['case_no']
                                 petitionar_advocates = []
@@ -48,9 +55,9 @@ def webScraping(request):
                                 
                                 for p in case['petitionar_advocates']:    
                                     petitionar_advocates.append(createLawyer(createUser(p)))
-                                for p in case['party'].split(".Vs.")[0].split("&"):                                   
+                                for p in case['party'].split("Vs.")[0].split("&"):                                   
                                     petionar.append(createUser(p))                                    
-                                for p in case['party'].split(".Vs.")[1].split("&"):
+                                for p in case['party'].split("Vs.")[1].split("&"):
                                     respondant.append(createUser(p))                                                                    
                                 for r in case['respondent_advocates']:
                                     respondent_advocates.append(createLawyer(createUser(r)))
@@ -58,9 +65,7 @@ def webScraping(request):
                                 try:
                                     caseObject =   Cases.objects.get(name = case_no)
                                 except:
-                                    caseObject =   Cases.objects.create(judge =Judge.objects.all()[0],name = case_no)
-
-                                caseObject.judge = Judge.objects.all()[0]
+                                    caseObject =   Cases.objects.create(name = case_no)                                
                                 for p  in  petitionar_advocates:
                                     if p not in caseObject.defense_lawyers.all():
                                         caseObject.defense_lawyers.add(p)
@@ -74,34 +79,59 @@ def webScraping(request):
                                     if p not in caseObject.respondant.all():
                                         caseObject.respondant.add(p)
                                 caseObject.save()
-                    try:
-                                    caseDay  = CasesDay.objects.get(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
-                    except:
-                                    caseDay  = CasesDay.objects.create(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
+                                caseObjectList.append(caseObject)                                                   
+                    
+                    for caseObject in caseObjectList:
+                        try:
+                                        caseDay  = CasesDay.objects.get(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
+                        except:
+                                        caseDay  = CasesDay.objects.create(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
+                        
+                        for j in judgeList:
+                            if j not in caseDay.judge.all():
+                                caseDay.judge.add(j)
+                    
                     caseDay.save()
 
         return  HttpResponse("akash")
 
 
 def createUser(p):
-    print p
     username = p 
     p = p.strip().split(" ")      
     try:
         pet = User.objects.get(username = username)
     except ObjectDoesNotExist:
-        if len(p) == 1:
-            pet = User.objects.create(username = username)      
-        elif len(p) ==2 :
+           
+        if len(p) ==2 :
             pet = User.objects.create(username = username, first_name = p[0], last_name = p[1])      
         elif len(p) ==3 :
             pet = User.objects.create(username = username, first_name = p[0]+" "+p[1], last_name = p[2])
+        else:
+            pet = User.objects.create(username = username)   
         pet.save()
         pet.set_unusable_password() 
         pet.save()
-
+    return pet
+def createJudgeUSer(p):
+    username = "HON'BLE MR. JUSTICE "+p 
+    p = p.strip().split(" ")      
+    try:
+        pet = User.objects.get(username = username)
+    except ObjectDoesNotExist:
+           
+        if len(p) ==2 :
+            pet = User.objects.create(username = username, first_name = p[0], last_name = p[1])      
+        elif len(p) ==3 :
+            pet = User.objects.create(username = username, first_name = p[0]+" "+p[1], last_name = p[2])
+        else:
+            pet = User.objects.create(username = username)   
+        pet.save()
+        pet.set_unusable_password() 
+        pet.save()
     return pet
 
+    
 def createLawyer(userObject):
     try:
         lawyer = Lawyers.objects.get(user = userObject)

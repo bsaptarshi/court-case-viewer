@@ -1,5 +1,6 @@
 from django.db import models
 from home.models import User,Lawyers,Judge
+
 # Create your models here.
 COURT_CHOICES = (
     ("Supreme Court", "Supreme Court"),
@@ -24,7 +25,7 @@ class Cases(models.Model):
     defendent = models.ManyToManyField(User,related_name="defendent_user",null = True, blank =  True)
     respondant = models.ManyToManyField(User,related_name="respondant_user",null = True, blank =  True)
    
-    judge = models.ForeignKey(Judge)
+    
     
 
 class CasesDay(models.Model):
@@ -32,7 +33,7 @@ class CasesDay(models.Model):
     court = models.ForeignKey(Court)
     serial = models.IntegerField()
     date = models.DateField()
-    
+    judge = models.ManyToManyField(Judge)
 
 class CaseFilter(models.Model):
     search = models.ForeignKey(CaseSearch)
