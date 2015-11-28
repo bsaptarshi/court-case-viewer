@@ -7,12 +7,24 @@ import pprint
 from datetime import date
 import json
 import sys
+import json
 
 
 headerData = {}
 bodyData = []
+
+
 urlBase = "http://localhost:8000"
-keyMap = {'0' : 'SLNO', '1' : 'CASENO', '2' : 'PARTY', '3' : 'PETADV', '4' : 'RESADV'}
+keyMap = {'0' : 'serial', '1' : 'case_no', '2' : 'party', '3' : 'petitionar_advocates', '4' : 'respondent_advocates'}
+toJSONMap = {'serial' : 'serial', 'case_no' : 'case_no', 'party' : 'party', 'petitionar_advocates' : 'petitionar_advocates', 'respondent_advocates' : 'respondent_advocates'}
+
+# serialNumber = 'NONE'
+caseNumber = 'ABCD'
+cNo = '-1'
+slNo = '-1'
+
+caseData = []
+
 
 def scrapehelper(argv):
     if len (argv) == 1:
@@ -41,13 +53,15 @@ def scrapehelper(argv):
             parseHTMLtoJSON(sample.read ())
     else:
         if argv[0] == "sample":
-            sample = open ('sample.html', 'r')
+            #print "Reading from sample"
+            sample = open ('mySample.html', 'r')
             parseHTMLtoJSON(sample.read ())
             #sending predefined json to web service for now.
             json_file = open ('json_sample', 'r')
             json_data = json.load(json_file)            
             r = requests.post (urlBase+"/cases/scrape/", data = json.dumps(json_data))
-
+            print "======================================================================="
+            print r.text
         else:
             today = date.today ()
             r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
@@ -82,74 +96,163 @@ def getAvailableCourts (htmlText):
     return options
 
 def parseHTMLtoJSON(htmlText):
-	soup = BeautifulSoup(htmlText, 'html.parser')
-	tables = soup.findChildren('table')
-#	print len(tables)
-	storeHeader(tables[0])
-	storeBody(tables)
+    soup = BeautifulSoup(htmlText, 'html.parser')
+    allTables = soup.findChildren('table')
+    # print tables
+    storeHeader(allTables[0])
+    bodyTables = soup.findChildren('table', {'class':'style3'})
+    storeBody(bodyTables)
 
 
 def storeBody(bodyText):
-    for body in range(1,2):#len(bodyText)
-        extractBodyText(bodyText[body])
+    # print "Body Length = ", len(bodyText)
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pp.pprint (bodyText)
+    num = 0;
+    for body in range(0,len(bodyText)):#len(bodyText)
+        rowData = extractBodyText(bodyText[body])
+        bodyData.insert(num, rowData)
+        num = num + 1
+
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pp.pprint(bodyData)
+    # convertToJSON(bodyData)
+
+    print "--------------------------FINAL CASEDATA---------------------------------"
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(caseData) 
+    # print caseData
 
 def extractBodyText(row):
-	datas = row.findChildren('tr')
+    # print "----------------NEW ROW---------------------"
+    rowData = storeRowData(row)
+    children = row.findChildren('tr')
+    caseNo = ''
+    serialNo = ''
+    for child in children:
+        newData = parseChildren(child, caseNo, serialNo)
+        # print "++++++++++++++++PARSED DATA++++++++++++++++"
+        # print newData
+    # print children
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pp.pprint(row)
+    # print "++++++++++++++++PARSED DATA++++++++++++++++"
+    # pp.pprint(rowData)
+    return rowData
 
-	# pp1 = pprint.PrettyPrinter(indent=4)
-	# pp1.pprint(datas)
-	num = 0;
-	for data in datas:
-		rowData = storeRowData(data)
-		# print rowData
-		bodyData.insert(num, rowData)
-		num = num + 1
 
-	pp = pprint.PrettyPrinter(indent=4)
-	#pp.pprint(bodyData)
-        pprinted = pp.pformat (bodyData)
-#        print pprinted
+def parseChildren(data, caseNo, serialNo):
+    elem = data.findChildren('td')
+    if not elem:
+        print "empty list"
+        return
 
-            
+    # print "---------------------New Child--------------------------"
+    # print data
+    count = 0;
+    global caseNumber
+    global cNo
+    global slNo
+    dataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
+    for e in elem:
+        currKey = keyMap[str(count%5)]
+        elemText = str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
+
+        if (currKey == 'case_no'):
+            # if (((elemText != 'None') or (elemText != '\xc2\xa0')) and (elemText != serialNumber)):
+            #     serialNumber = elemText
+            # print "------------------> ELEMTEXT = ", elemText
+            if (elemText != caseNumber and elemText != "None" and elemText != "\xc2\xa0"):
+                # print ("updating old case no "+caseNumber+" with "+elemText)
+                caseNumber = elemText
+                # print "--------------Dataset------------------"
+                # print dataSet
+            # print "------------------> CASE NUMBER = ", caseNumber
+        
+        if (currKey == 'serial'):
+            if (elemText != slNo and elemText != "None" and elemText != "\xc2\xa0" and elemText != "WITH"):
+                # print ("updating old serial no "+slNo+" with "+elemText)
+                slNo = elemText
+                # print "--------------Dataset------------------"
+                # print dataSet
+            # print "------------------> SERIAL Number = ", slNo
+
+        if ((elemText == 'None') or (elemText == '\xc2\xa0')):
+            # if (currKey == 'serial'):
+            #     print elemText
+            count = count + 1
+            continue
+        if (dataSet[currKey] != ''):
+            dataSet[currKey] += " | " + elemText
+        else:
+            dataSet[currKey] += elemText
+        if e.has_attr("colspan"):
+            count = count + int(e['colspan'])
+        else:
+            count = count + 1
+
+    if (cNo != caseNumber):
+        cNo = caseNumber
+        # print "Different Case Number Found--------------Dataset------------------"
+        # print "Serial Number = ", slNo
+        dataSet['serial'] = slNo
+        # print dataSet
+        convertAndStoreToJSON(dataSet)
+
+    return dataSet
+
+
 def storeRowData(data):
-	# print "PRINTING RAW DATA"
-	# print data.prettify()
-	elem = data.findChildren('td')
-	count = 0;
-	dataSet = {'SLNO':'', 'CASENO':'', 'PARTY':'', 'PETADV':'', 'RESADV':''}
-	for e in elem:
-		# print "COUNT = ", count%5
-		currKey = keyMap[str(count%5)]
-		dataSet[currKey] += str(e.find('pre-line')).replace ("<pre-line","").replace ("/pre-line>","")
-		if e.has_attr("colspan"):
-			count = count + int(e['colspan'])
-		else:
-			count = count + 1
-		
-		# print "COUNT = ", count%5
+    elem = data.findChildren('td')
+    count = 0;
+    dataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
+    for e in elem:
+        currKey = keyMap[str(count%5)]
+        elemText = str(e.find('pre-line')).replace ("<pre-line>","").replace ("</pre-line>","")
 
-	# print "PRINTING DATASET"	
-	# pp = pprint.PrettyPrinter(indent=4)
-	# pp.pprint(dataSet)
-	return dataSet
+        # if (currKey == 'serial'):
+        #     if (((elemText != 'None') or (elemText != '\xc2\xa0')) and (elemText != serialNumber)):
+        #         serialNumber = elemText
+        #         print "SERIAL  NUMBER = ", serialNumber
+        if ((elemText == 'None') or (elemText == '\xc2\xa0')):
+            # if (currKey == 'serial'):
+            #     print elemText
+            count = count + 1
+            continue
+        if (dataSet[currKey] != ''):
+            dataSet[currKey] += " | " + elemText
+        else:
+            dataSet[currKey] += elemText
+        if e.has_attr("colspan"):
+            count = count + int(e['colspan'])
+        else:
+            count = count + 1
+    return dataSet
+
+def convertAndStoreToJSON(data):
+    data['petitionar_advocates'] = data['petitionar_advocates'].split('<br>')
+    data['respondent_advocates'] = data['respondent_advocates'].split('<br>')
+    toJson = json.dumps(data)
+    caseData.append(toJson)
 
 
 
 def storeHeader(headerText):
-	children = headerText.find('td')
-	contentText = re.sub('<[^<]+?>', '&&&', children.renderContents().strip()).split('&&&')
-	courtNo = contentText[0].split(' ')[2].strip()
-	justice1 = contentText[1].strip()
-	justice2 = contentText[2].strip()
+    children = headerText.find('td')
+    contentText = re.sub('<[^<]+?>', '&&&', children.renderContents().strip()).split('&&&')
+    courtNo = contentText[0].split(' ')[2].strip()
+    justice1 = contentText[1].strip()
+    justice2 = contentText[2].strip()
 
-	headerData["CourtNo"] = courtNo
-	headerData["Justice1"] = justice1
-	headerData["Justice2"] = justice2
+    headerData["CourtNo"] = courtNo
+    headerData["Justice1"] = justice1
+    headerData["Justice2"] = justice2
         
-        print "Court No: ", courtNo
-        print "Justice 1: ", justice1
-        print "Justice 2: ", justice2
-        print "-----"
+    print "Court No: ", courtNo
+    print "Justice 1: ", justice1
+    print "Justice 2: ", justice2
+    print "-----"
 
 if __name__ == '__main__':
+    # print "serial = ", serialNumber
     scrapehelper(sys.argv[1:])
