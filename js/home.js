@@ -115,6 +115,13 @@ $(function() {
     $('nav#menu-left').mmenu();
 });
 $(document).ready(function() {
-    $('#scheduleTable').DataTable();
+    $('#scheduleTable').DataTable({
+    	"paging":   false,
+        "ordering": false,
+        "info":     false
+    	
+    	
+    });
+    
 });
 $("#aboutUs").hide();
