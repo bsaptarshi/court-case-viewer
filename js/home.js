@@ -53,7 +53,8 @@ $(function(){
         			}  
         		
         		});
-        		var mainData = "<tr><td>"+case_name+"</td><td>"+court+"</td><td>"+defendant+" Vs."+respondant+"</td><td>"+def_lawyers+"</td><td>"+res_lawyers+"</td><td></td></tr>";
+            var mainData = "<tr><td><div class=card><p class=serial><b>CASE NO: </b>" +  serial +"</p><p class=court_no><b>COURT NO.: </b> " + court + "</p><p class=party><b>PARTY: </b><br/> " + defendant + " Vs " + respondant + "<p class=petitioner_adv><B>PETITIONER ADV.:</b> <br/>" + def_lawyers + "</p><p class=respondent_adv><b>RESPONDENT ADV.: </b><br/>"+ res_lawyers +"</p><p class=details><b>DETAILS:</b><br/><br/></p></div>"
+//        		var mainData = case_name+court+defendant+respondant+def_lawyers+res_lawyers;
     			$("#tableData").append(mainData);
         	});
         }
