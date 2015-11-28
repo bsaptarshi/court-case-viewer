@@ -4,19 +4,25 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 
 from cases.models import Cases, Court, CasesDay, COURT_CHOICES
-from home.models import Judge, Lawyers, UserProfile, LAWYER_CHOICES, JUDGE_CHOICES
-import json, datetime
+from home.models import Judge, Lawyers, LAWYER_CHOICES, JUDGE_CHOICES
+import json, datetime 
+import ast
 # Create your views here.
 @csrf_exempt 
 def webScraping(request):    
     if request.method=="POST":
-        data =  json.loads(request.body)
+        #data =  json.loads(request.body)
+        #print data
         court_no = None
         todaysDate = None
+        data = request.body
+        data = json.loads(data)
+        data = ast.literal_eval(data)
         for k,v in data.items():  
             if k == "date":
                 todaysDate = datetime.datetime.strptime(v, "%d-%m-%Y").date()
-            if k == "courts":                
+            if k == "courts":         
+                print v       
                 for key,court_cases in v.items():
                     for court in court_cases:                        
                         court_no =  court['court_no']   
