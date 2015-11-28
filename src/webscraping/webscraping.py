@@ -62,13 +62,11 @@ def scrapehelper(argv):
             print "Reading from sample"
             sample = open ('mySample.html', 'r')
             parseHTMLtoJSON(sample.read ())
-            #sending predefined json to web service for now.
-            # json_file = open ('json_sample', 'r')
-            # json_data = json_file.read ()
-            # print json_data
-            # Access finalDataToJSON var to get the final data in JSON form
-            print finalDataToJSON
-            r = requests.post ("url", data={"body": finalDataToJSON, "date":"25-11-2015", "court":"13"})
+            
+            finalJSONData = json.dumps(finalNormalData)
+            print "--------FINAL JSON DATA---------"
+            print finalJSONData
+            r = requests.post ("url", data={"body": finalJSONData, "date":"25-11-2015", "court":"13"})
 
         else:
             today = date.today ()
