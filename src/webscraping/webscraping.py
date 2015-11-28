@@ -22,6 +22,7 @@ serialNumber = '-101'
 caseData = []
 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 finalData = {'date' : '', 'courts' : ''}
+finalDataToJSON = ''
 
 def scrapehelper(argv):
     if len (argv) == 1:
@@ -54,10 +55,12 @@ def scrapehelper(argv):
             sample = open ('mySample.html', 'r')
             parseHTMLtoJSON(sample.read ())
             #sending predefined json to web service for now.
-            json_file = open ('json_sample', 'r')
-            json_data = json_file.read ()
+            # json_file = open ('json_sample', 'r')
+            # json_data = json_file.read ()
             # print json_data
-            # r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
+            # Access finalDataToJSON var to get the final data in JSON form
+            print finalDataToJSON
+            r = requests.post ("url", data={"body": finalDataToJSON, "date":"25-11-2015", "court":"13"})
 
         else:
             today = date.today ()
@@ -74,10 +77,12 @@ def scrapehelper(argv):
                 parseHTMLtoJSON(r3.text)
 
             #sending predefined json to web service for now.
-            json_file = open ('json_sample', 'r')
-            json_data = json_file.read ()
-            print json_data
-            r = requests.post ("url", data={"body": json_data, "date":"25-11-2015", "court":"13"})
+            # json_file = open ('json_sample', 'r')
+            # json_data = json_file.read ()
+            # print json_data
+            # Access finalDataToJSON var to get the final data in JSON form
+            print finalDataToJSON
+            r = requests.post ("url", data={"body": finalDataToJSON, "date":"25-11-2015", "court":"13"})
 
         
 
@@ -200,6 +205,8 @@ def storeHeader(headerText):
     print "-----"
 
 def renderFullJSON():
+    global finalDataToJSON
+    global finalData
     tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
     tempFinalData['court_no'] = headerData["CourtNo"]
     tempFinalData['judge'] = headerData["Justice1"] + "<br>" +headerData["Justice2"]
@@ -209,9 +216,9 @@ def renderFullJSON():
     tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
     finalDataToJSON = json.dumps(finalData)
 
-    print "--------------------------FINAL JSONDATA---------------------------------"
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(finalDataToJSON)
+    # print "--------------------------FINAL JSONDATA---------------------------------"
+    # pp = pprint.PrettyPrinter(indent=4)
+    # pp.pprint(finalDataToJSON)
 
 
 if __name__ == '__main__':
