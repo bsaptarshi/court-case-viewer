@@ -23,8 +23,10 @@ caseData = []
 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 finalData = {'date' : '', 'courts' : ''}
 finalDataToJSON = ''
+dateOfData = ''
 
 def scrapehelper(argv):
+    global dateOfData
     if len (argv) == 1:
         daemon = "y"
     else:
@@ -40,6 +42,7 @@ def scrapehelper(argv):
             getAvailableDates (r1.text)
             print "-----"
             dates = raw_input ("Enter data in DD-MM-YYYY: ")
+            dateOfData = dates
             r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": dates, "q":""})
             courtNos = getAvailableCourts (r2.text)
             print "-----"
@@ -70,6 +73,7 @@ def scrapehelper(argv):
             sessionIDString = "PHPSESSID="+sessionID
             r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
             todayString = today.strftime ('%d-%m-%Y')
+            dateOfData = todayString
             r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": todayString, "q":""})
             courtNos = getAvailableCourts (r2.text)
             for court in courtNos:
@@ -211,6 +215,7 @@ def renderFullJSON():
     tempFinalData['court_no'] = headerData["CourtNo"]
     tempFinalData['judge'] = headerData["Justice1"] + "<br>" +headerData["Justice2"]
     tempFinalData['case'] = caseData
+    finalData['date'] = dateOfData
     finalData['courts'] = {'court' : ''}
     finalData['courts']['court'] = tempFinalData
     tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
