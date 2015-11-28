@@ -16,22 +16,29 @@ def webScraping(request):
         court_no = None
         todaysDate = None
         data = request.body
+        data = data.replace("<br>"," ")
+        data = data.replace("</br>"," ")
         data = json.loads(data)
         data = ast.literal_eval(data)
         for k,v in data.items():  
             if k == "date":
                 todaysDate = datetime.datetime.strptime(v, "%d-%m-%Y").date()
             if k == "courts":         
-                print v       
+                
                 for key,court_cases in v.items():
-                    for court in court_cases:                        
-                        court_no =  court['court_no']   
-                        try:
-                            courtObject = Court.objects.get(number = court_no,type =COURT_CHOICES[0][0])    
-                        except ObjectDoesNotExist:
-                            courtObject = Court.objects.create(number = court_no,type =COURT_CHOICES[0][0])                
-                        for value,cases in court['cases'].items():
-                            for case in cases:
+                   
+                    for key1,court in court_cases.items():                        
+                        print key1,court," deshpande"
+                        if key1=="judge":
+                            print court
+                        if key1=="court_no":                                                      
+                            court_no =  court                        
+                            try:
+                                courtObject = Court.objects.get(number = court_no,type =COURT_CHOICES[0][0])    
+                            except ObjectDoesNotExist:
+                                courtObject = Court.objects.create(number = court_no,type =COURT_CHOICES[0][0]) 
+                        if key1=="case":                                           
+                            for case in court:                                                               
                                 serial =  case['serial']
                                 case_no =  case['case_no']
                                 petitionar_advocates = []
@@ -67,19 +74,19 @@ def webScraping(request):
                                     if p not in caseObject.respondant.all():
                                         caseObject.respondant.add(p)
                                 caseObject.save()
-                                try:
+                    try:
                                     caseDay  = CasesDay.objects.get(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
-                                except:
+                    except:
                                     caseDay  = CasesDay.objects.create(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
-                                caseDay.save()
+                    caseDay.save()
 
         return  HttpResponse("akash")
 
 
 def createUser(p):
+    print p
     username = p 
-    p = p.strip().split(" ")   
-                               
+    p = p.strip().split(" ")      
     try:
         pet = User.objects.get(username = username)
     except ObjectDoesNotExist:
