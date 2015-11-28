@@ -175,9 +175,10 @@ def parseChildren(data):
             count = count + 1
 
 def formatCaseData(data):
-    data['petitionar_advocates'] = data['petitionar_advocates'].split('<br>')
-    data['respondent_advocates'] = data['respondent_advocates'].split('<br>')
-    # toJson = json.dumps(data)
+    if type(data['petitionar_advocates']) == 'str':
+        data['petitionar_advocates'] = data['petitionar_advocates'].split('<br>')
+    if type(data['respondent_advocates']) == 'str':
+        data['respondent_advocates'] = data['respondent_advocates'].split('<br>')
     caseData.append(data)
 
 
@@ -207,7 +208,7 @@ def renderFullJSON():
     finalData['courts']['court'] = tempFinalData
     tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
     finalDataToJSON = json.dumps(finalData)
-    
+
     print "--------------------------FINAL JSONDATA---------------------------------"
     pp = pprint.PrettyPrinter(indent=4)
     pp.pprint(finalDataToJSON)
