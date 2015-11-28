@@ -2,9 +2,9 @@ from django.shortcuts import render, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
-from cases.models import Cases, Court, CasesDay, COURT_CHOICES
+from cases.models import Cases, Court, CasesDay, COURT_CHOICES, CaseRelated
 from home.models import Judge, Lawyers, LAWYER_CHOICES, JUDGE_CHOICES
-import json, datetime 
+import json, datetime, re
 import ast
 # Create your views here.
 @csrf_exempt 
@@ -14,85 +14,92 @@ def webScraping(request):
         #print data
         court_no = None
         todaysDate = None
-        data = request.body       
+        data = request.body              
         data = data.replace("<br>"," ")
-        data = data.replace("</br>"," ")
-        data = json.loads(data)
+        data = data.replace("</br>"," ")        
         data = ast.literal_eval(data)
-        print data
+      
         for k,v in data.items():  
                 
             if k == "date":
                 todaysDate = datetime.datetime.strptime(v, "%d-%m-%Y").date()
             if k == "courts":                         
-                for key,court_cases in v.items():    
-                    judgeList = []       
-                    caseObjectList = []        
-                    for key1,court in court_cases.items():    
-                                                             
-                        if key1=="judge":
-                            
-                            for c in court.split("HON'BLE MR. JUSTICE"):
-                                judgeObject = createJudge( createJudgeUSer(c))
-                                judgeObject.save()
-                                judgeList.append(judgeObject)
-                           
-                        if key1=="court_no":                                                      
-                            court_no =  court                        
-                            try:
-                                courtObject = Court.objects.get(number = court_no,type =COURT_CHOICES[0][0])    
-                            except ObjectDoesNotExist:
-                                courtObject = Court.objects.create(number = court_no,type =COURT_CHOICES[0][0]) 
-                        if key1=="case":                                           
-                            for case in court:   
-                                print case                                                            
-                                serial =  case['serial']
-                                case_no =  case['case_no']
-                                petitionar_advocates = []
-                                respondent_advocates = []
-                                petionar = []
-                                respondant = []
+                for key,court_cases in v.items():                                                 
+                    for court1 in court_cases:  
+                        judgeList = []       
+                        for key1,court in court1.items():    
+                                                                                      
+                            if key1=="judge":
                                 
-                                for p in case['petitionar_advocates']:    
-                                    petitionar_advocates.append(createLawyer(createUser(p)))
-                                for p in case['party'].split("Vs.")[0].split("&"):                                   
-                                    petionar.append(createUser(p))                                    
-                                for p in case['party'].split("Vs.")[1].split("&"):
-                                    respondant.append(createUser(p))                                                                    
-                                for r in case['respondent_advocates']:
-                                    respondent_advocates.append(createLawyer(createUser(r)))
-                                
+                                for c in court.split("HON'BLE MR. JUSTICE"):
+                                    judgeObject = createJudge( createJudgeUSer(c))
+                                    judgeObject.save()
+                                    judgeList.append(judgeObject)
+                               
+                            if key1=="court_no":                                                      
+                                court_no =  court                        
                                 try:
-                                    caseObject =   Cases.objects.get(name = case_no)
-                                except:
-                                    caseObject =   Cases.objects.create(name = case_no)                                
-                                for p  in  petitionar_advocates:
-                                    if p not in caseObject.defense_lawyers.all():
-                                        caseObject.defense_lawyers.add(p)
-                                for p  in  respondent_advocates:
-                                    if p not in caseObject.respondant_lawyers.all():
-                                        caseObject.respondant_lawyers.add(p)
-                                for p  in  petionar:
-                                    if p not in caseObject.defendent.all():
-                                        caseObject.defendent.add(p)
-                                for p  in  respondant:
-                                    if p not in caseObject.respondant.all():
-                                        caseObject.respondant.add(p)
-                                caseObject.save()
-                                caseObjectList.append(caseObject)                                                   
-                    
-                    for caseObject in caseObjectList:
-                        try:
-                                        caseDay  = CasesDay.objects.get(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
-                        except:
-                                        caseDay  = CasesDay.objects.create(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
+                                    courtObject = Court.objects.get(number = court_no,type =COURT_CHOICES[0][0])    
+                                except ObjectDoesNotExist:
+                                    courtObject = Court.objects.create(number = court_no,type =COURT_CHOICES[0][0]) 
+                            if key1=="cases":    
+                                prevSerial = None
+                                prevPrimaryCase = None
+                                for case in court['case']:   
+                                                                                        
+                                    serial =  case['serial']
+                                    case_no =  case['case_no']
+                                    petitionar_advocates = []
+                                    respondent_advocates = []
+                                    petionar = []
+                                    respondant = []
+                                    
+                                    for p in case['petitionar_advocates']:    
+                                        petitionar_advocates.append(createLawyer(createUser(p)))
+                                    for p in case['party'].split("Vs.")[0].split("&"):                                   
+                                        petionar.append(createUser(p))                                    
+                                    for p in case['party'].split("Vs.")[1].split("&"):
+                                        respondant.append(createUser(p))                                                                    
+                                    for r in case['respondent_advocates']:
+                                        respondent_advocates.append(createLawyer(createUser(r)))
+                                    
+                                    try:
+                                        caseObject =   Cases.objects.get(name = case_no)
+                                    except:
+                                        caseObject =   Cases.objects.create(name = case_no)                                
+                                    for p  in  petitionar_advocates:
+                                        if p not in caseObject.defense_lawyers.all():
+                                            caseObject.defense_lawyers.add(p)
+                                    for p  in  respondent_advocates:
+                                        if p not in caseObject.respondant_lawyers.all():
+                                            caseObject.respondant_lawyers.add(p)
+                                    for p  in  petionar:
+                                        if p not in caseObject.defendent.all():
+                                            caseObject.defendent.add(p)
+                                    for p  in  respondant:
+                                        if p not in caseObject.respondant.all():
+                                            caseObject.respondant.add(p)
+                                    caseObject.save()
+                                                                                       
+                            
                         
-                        for j in judgeList:
-                            if j not in caseDay.judge.all():
-                                caseDay.judge.add(j)
-                    
-                    caseDay.save()
-
+                                    try:
+                                        caseDay  = CasesDay.objects.get(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
+                                    except:
+                                        serial = re.findall(r'\d+',serial)[0]
+                                        caseDay  = CasesDay.objects.create(court = courtObject,serial = int(serial),date = todaysDate, case = caseObject)
+                                    
+                                    for j in judgeList:
+                                        if j not in caseDay.judge.all():
+                                            caseDay.judge.add(j)
+                                        
+                                    caseDay.save()
+                                    if prevSerial==serial:
+                                        if caseObject not in prevPrimaryCase.related_cases.all():
+                                            prevPrimaryCase.related_cases.add(caseObject)
+                                    else:
+                                        prevPrimaryCase = CaseRelated.objects.create(primary_case = caseObject)
+                                    prevSerial = serial
         return  HttpResponse("akash")
 
 

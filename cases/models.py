@@ -24,7 +24,8 @@ class Cases(models.Model):
     respondant_lawyers = models.ManyToManyField(Lawyers,related_name = "respondant_lawyers_user",null = True, blank =  True)
     defendent = models.ManyToManyField(User,related_name="defendent_user",null = True, blank =  True)
     respondant = models.ManyToManyField(User,related_name="respondant_user",null = True, blank =  True)
-   
+    def __unicode__(self):
+        return self.name
     
     
 
@@ -34,7 +35,8 @@ class CasesDay(models.Model):
     serial = models.IntegerField()
     date = models.DateField()
     judge = models.ManyToManyField(Judge)
-
+    def __unicode__(self):
+        return self.case.name
 class CaseFilter(models.Model):
     search = models.ForeignKey(CaseSearch)
     field = models.CharField(max_length = 200, null = True, blank = True)
@@ -43,3 +45,6 @@ class CaseFilter(models.Model):
 class CaseRelated(models.Model):
     primary_case = models.ForeignKey(Cases)
     related_cases = models.ManyToManyField(Cases,related_name = "sub_cases", null = True, blank = True)
+    def __unicode__(self):
+        return self.primary_case.name
+    

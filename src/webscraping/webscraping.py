@@ -24,14 +24,13 @@ caseData = []
 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 dateOfData = ''
 
-<<<<<<< HEAD
-=======
+
 finalNormalData = {'date' : '', 'courts' : ''}
 finalNormalData['courts'] = {'court' : ''}
 finalNormalData['courts']['court'] = []
 finalJSONData = ''
 
->>>>>>> webscraping
+
 
 def scrapehelper(argv):
     global dateOfData
@@ -66,7 +65,7 @@ def scrapehelper(argv):
             #print "Reading from sample"
             sample = open ('mySample.html', 'r')
             parseHTMLtoJSON(sample.read ())
-<<<<<<< HEAD
+
             #sending predefined json to web service for now.
 
             json_file = open ('json_sample', 'r')
@@ -74,13 +73,7 @@ def scrapehelper(argv):
             r = requests.post (urlBase+"/cases/scrape/", data = json.dumps(json_data))
             print "======================================================================="
             print r.text
-=======
-            
-            finalJSONData = json.dumps(finalNormalData)
-            print "--------FINAL JSON DATA---------"
-            print finalJSONData
-            r = requests.post ("url", data={"body": finalJSONData, "date":"25-11-2015", "court":"13"})
->>>>>>> webscraping
+
 
         else:
             today = date.today() - timedelta(days=2)
@@ -99,7 +92,7 @@ def scrapehelper(argv):
                 r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":court.text,"court_wise_submit":"Submit","q":""})
                 parseHTMLtoJSON(r3.text)
 
-<<<<<<< HEAD
+
             #sending predefined json to web service for now.
             # json_file = open ('json_sample', 'r')
             # json_data = json_file.read ()
@@ -107,15 +100,10 @@ def scrapehelper(argv):
             # Access finalDataToJSON var to get the final data in JSON form
            
             #r = requests.post ("url", data={"body": finalDataToJSON, "date":"25-11-2015", "court":"13"})
-            
-            r = requests.post (urlBase+"/cases/scrape/", data = json.dumps(finalDataToJSON))
-            print r.text
-=======
             finalJSONData = json.dumps(finalNormalData)
-            print "--------FINAL JSON DATA---------"
-            print finalJSONData
-            r = requests.post ("url", data={"body": finalJSONData, "date":"25-11-2015", "court":"13"})
->>>>>>> webscraping
+            r = requests.post (urlBase+"/cases/scrape/", data =finalJSONData )
+            print r.text
+
 
         
 
