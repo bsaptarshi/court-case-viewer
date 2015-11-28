@@ -2,7 +2,7 @@ from lawCalender.utils import urlencodeSerializer
 from home.models import Judge, Lawyers, UserProfile
 
 
-from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
+from tastypie.resources import ModelResource, ALL_WITH_RELATIONS, ALL
 from tastypie.authorization import Authorization
 from tastypie.authentication import Authentication
 from tastypie.exceptions import BadRequest
