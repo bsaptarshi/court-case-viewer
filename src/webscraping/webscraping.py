@@ -21,6 +21,7 @@ serialNumber = '-101'
 
 caseData = []
 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
+finalData = {'date' : '', 'courts' : ''}
 
 def scrapehelper(argv):
     if len (argv) == 1:
@@ -105,11 +106,8 @@ def storeBody(bodyText):
         extractBodyText(bodyText[body])
 
     tempDataSet['serial'] = slNo
-    convertAndStoreToJSON(tempDataSet)
-
-    print "--------------------------FINAL CASEDATA---------------------------------"
-    pp = pprint.PrettyPrinter(indent=4)
-    pp.pprint(caseData) 
+    formatCaseData(tempDataSet)
+    renderFullJSON()
 
 def extractBodyText(row):
     children = row.findChildren('tr')
@@ -146,7 +144,7 @@ def parseChildren(data):
             tempDataSet['serial'] = slNo
 
             if (tempDataSet['petitionar_advocates'] != ""):
-                convertAndStoreToJSON(tempDataSet)
+                formatCaseData(tempDataSet)
                 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 
         if (currKey == 'serial'):
@@ -159,7 +157,7 @@ def parseChildren(data):
             tempDataSet['serial'] = serialNumber
             serialNumber = slNo
             if (tempDataSet['petitionar_advocates'] != ""):
-                convertAndStoreToJSON(tempDataSet)
+                formatCaseData(tempDataSet)
                 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 
         if ((elemText == 'None') or (elemText == '\xc2\xa0')):
@@ -176,11 +174,11 @@ def parseChildren(data):
         else:
             count = count + 1
 
-def convertAndStoreToJSON(data):
+def formatCaseData(data):
     data['petitionar_advocates'] = data['petitionar_advocates'].split('<br>')
     data['respondent_advocates'] = data['respondent_advocates'].split('<br>')
-    toJson = json.dumps(data)
-    caseData.append(toJson)
+    # toJson = json.dumps(data)
+    caseData.append(data)
 
 
 
@@ -199,6 +197,21 @@ def storeHeader(headerText):
     print "Justice 1: ", justice1
     print "Justice 2: ", justice2
     print "-----"
+
+def renderFullJSON():
+    tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
+    tempFinalData['court_no'] = headerData["CourtNo"]
+    tempFinalData['judge'] = headerData["Justice1"] + "<br>" +headerData["Justice2"]
+    tempFinalData['case'] = caseData
+    finalData['courts'] = {'court' : ''}
+    finalData['courts']['court'] = tempFinalData
+    tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
+    finalDataToJSON = json.dumps(finalData)
+    
+    print "--------------------------FINAL JSONDATA---------------------------------"
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(finalDataToJSON)
+
 
 if __name__ == '__main__':
     scrapehelper(sys.argv[1:])
