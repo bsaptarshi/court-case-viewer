@@ -61,7 +61,10 @@ def webScraping(request):
                                     if p not in caseObject.respondant.all():
                                         caseObject.respondant.add(p)
                                 caseObject.save()
-                                caseDay  = CasesDay.objects.create(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
+                                try:
+                                    caseDay  = CasesDay.objects.get(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
+                                except:
+                                    caseDay  = CasesDay.objects.create(court = courtObject,serial = serial,date = todaysDate, case = caseObject)
                                 caseDay.save()
 
         return  HttpResponse("akash")

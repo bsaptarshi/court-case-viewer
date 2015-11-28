@@ -21,6 +21,9 @@ class UserResources(ModelResource):
         allowed_methods = ['get','post','put','patch']
         serializer = urlencodeSerializer()
         always_return_data = True
+        filtering = {}
+        for field in User.__dict__['_meta'].fields:
+            filtering.update({field.name : ALL_WITH_RELATIONS})
     def obj_create(self, bundle, request=None, **kwargs):
         try:
             bundle = super(UserResources, self).obj_create(bundle)
@@ -43,6 +46,9 @@ class JudgeResources(ModelResource):
         allowed_methods = ['get','post','put','patch']
         serializer = urlencodeSerializer()
         always_return_data = True
+        filtering = {}
+        for field in Judge.__dict__['_meta'].fields:
+            filtering.update({field.name : ALL_WITH_RELATIONS})
 
 class LawyersResources(ModelResource):    
     user = fields.ForeignKey(UserResources, 'user',full = True, null=True, blank=True)
@@ -54,6 +60,9 @@ class LawyersResources(ModelResource):
         allowed_methods = ['get','post','put','patch']
         serializer = urlencodeSerializer()
         always_return_data = True
+        filtering = {}
+        for field in Lawyers.__dict__['_meta'].fields:
+            filtering.update({field.name : ALL_WITH_RELATIONS})
     
 
 class UserProfileResources(ModelResource):
@@ -67,3 +76,6 @@ class UserProfileResources(ModelResource):
         allowed_methods = ['get','post','put','patch']
         serializer = urlencodeSerializer()
         always_return_data = True 
+        filtering = {}
+        for field in UserProfile.__dict__['_meta'].fields:
+            filtering.update({field.name : ALL_WITH_RELATIONS})

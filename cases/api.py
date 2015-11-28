@@ -2,7 +2,7 @@ from cases.models import Cases, CaseFilter, CaseSearch, Court, CasesDay, CaseRel
 from home.api import UserResources, LawyersResources
 from lawCalender.utils import urlencodeSerializer
 
-from tastypie.resources import ModelResource, ALL
+from tastypie.resources import ModelResource, ALL_WITH_RELATIONS
 from tastypie.authorization import Authorization
 from tastypie.authentication import Authentication
 from tastypie import fields
@@ -25,7 +25,7 @@ class CasesResources(ModelResource):
         always_return_data = True
         filtering = {}
         for field in Cases.__dict__['_meta'].fields:
-            filtering.update({field.name : ALL})
+            filtering.update({field.name : ALL_WITH_RELATIONS})
         
 class CaseSearchResources(ModelResource):
     user = fields.ForeignKey(UserResources, 'user')
@@ -40,7 +40,7 @@ class CaseSearchResources(ModelResource):
         always_return_data = True
         filtering = {}
         for field in CaseSearch.__dict__['_meta'].fields:
-            filtering.update({field.name : ALL})
+            filtering.update({field.name : ALL_WITH_RELATIONS})
         
 class CaseFilterResources(ModelResource):
     search = fields.ForeignKey(CaseSearchResources, 'search',full=True)
@@ -55,7 +55,7 @@ class CaseFilterResources(ModelResource):
         always_return_data = True
         filtering = {}
         for field in CaseFilter.__dict__['_meta'].fields:
-            filtering.update({field.name : ALL})
+            filtering.update({field.name : ALL_WITH_RELATIONS})
         
 class CourtResources(ModelResource):
     class Meta:
@@ -69,7 +69,7 @@ class CourtResources(ModelResource):
         always_return_data = True
         filtering = {}
         for field in Court.__dict__['_meta'].fields:
-            filtering.update({field.name : ALL})
+            filtering.update({field.name : ALL_WITH_RELATIONS})
 
 class CasesDayResources(ModelResource):
     case = fields.ForeignKey(CasesResources, 'case',full=True)
@@ -85,7 +85,7 @@ class CasesDayResources(ModelResource):
         always_return_data = True
         filtering = {}
         for field in CasesDay.__dict__['_meta'].fields:
-            filtering.update({field.name : ALL})
+            filtering.update({field.name : ALL_WITH_RELATIONS})
 
 class CaseRelatedResources(ModelResource):
     primary_case = fields.ForeignKey(CasesResources, 'case',full= True)
@@ -100,4 +100,4 @@ class CaseRelatedResources(ModelResource):
         always_return_data = True
         filtering = {}
         for field in CaseRelated.__dict__['_meta'].fields:
-            filtering.update({field.name : ALL})
+            filtering.update({field.name : ALL_WITH_RELATIONS})
