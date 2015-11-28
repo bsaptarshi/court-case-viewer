@@ -27,7 +27,6 @@ class Cases(models.Model):
     def __unicode__(self):
         return self.name
     
-    
 
 class CasesDay(models.Model):
     case = models.ForeignKey(Cases)

@@ -82,8 +82,7 @@ def scrapehelper(argv):
 
             sessionIDString = "PHPSESSID="+sessionID
             r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
-            todayString = today.strftime ('%d-%m-%Y')
-            todayString = "27-11-2015"
+            todayString = today.strftime ('%d-%m-%Y')            
             dateOfData = todayString
             finalNormalData['date'] = dateOfData
             r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": todayString, "q":""})
@@ -100,6 +99,7 @@ def scrapehelper(argv):
             # Access finalDataToJSON var to get the final data in JSON form
            
             #r = requests.post ("url", data={"body": finalDataToJSON, "date":"25-11-2015", "court":"13"})
+                       
             finalJSONData = json.dumps(finalNormalData)
             r = requests.post (urlBase+"/cases/scrape/", data =finalJSONData )
             print r.text
@@ -212,7 +212,6 @@ def formatCaseData(data):
     caseData.append(data)
 
 
-
 def storeHeader(headerText):
     children = headerText.find('td')
     contentText = re.sub('<[^<]+?>', '&&&', children.renderContents().strip()).split('&&&')
@@ -233,6 +232,7 @@ def renderCaseJSON():
     tempCaseData['cases'] = {'case' : ''}
     tempCaseData['cases']['case'] = caseData
     finalNormalData['courts']['court'].append(tempCaseData)
+    
 
 
 if __name__ == '__main__':

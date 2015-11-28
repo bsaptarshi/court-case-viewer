@@ -8,6 +8,7 @@ from tastypie.authentication import Authentication
 from tastypie import fields
 
 
+
 class CasesResources(ModelResource):  
     defense_lawyers = fields.ToManyField(LawyersResources, 'defense_lawyers',related_name="defense_lawyers_user",  full=True, null=True, blank=True)
     respondant_lawyers = fields.ToManyField(LawyersResources, 'respondant_lawyers', related_name="respondant_lawyers_user",full=True, null=True, blank=True)     

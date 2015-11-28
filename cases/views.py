@@ -7,6 +7,8 @@ from home.models import Judge, Lawyers, LAWYER_CHOICES, JUDGE_CHOICES
 import json, datetime, re
 import ast
 # Create your views here.
+
+
 @csrf_exempt 
 def webScraping(request):    
     if request.method=="POST":
@@ -103,6 +105,7 @@ def webScraping(request):
         return  HttpResponse("akash")
 
 
+
 def createUser(p):
     username = p 
     p = p.strip().split(" ")      
@@ -138,7 +141,6 @@ def createJudgeUSer(p):
         pet.save()
     return pet
 
-    
 def createLawyer(userObject):
     try:
         lawyer = Lawyers.objects.get(user = userObject)
