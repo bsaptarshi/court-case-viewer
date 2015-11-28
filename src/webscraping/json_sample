@@ -4,6 +4,7 @@
     "court": [
       {
         "court_no": "10",
+        "judge" : "Mr.S. Das",
         "cases": {
           "case": [
             {
@@ -41,6 +42,7 @@
       },
       {
         "court_no": "3",
+        "judge" : "Mr.S. Das <br> Mr.A. Dey",
         "cases": {
           "case": [
             {
