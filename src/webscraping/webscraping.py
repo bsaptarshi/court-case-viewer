@@ -22,13 +22,20 @@ serialNumber = '-101'
 
 caseData = []
 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
-finalData = {'date' : '', 'courts' : ''}
-finalDataToJSON = ''
 dateOfData = ''
 
+<<<<<<< HEAD
+=======
+finalNormalData = {'date' : '', 'courts' : ''}
+finalNormalData['courts'] = {'court' : ''}
+finalNormalData['courts']['court'] = []
+finalJSONData = ''
+
+>>>>>>> webscraping
 
 def scrapehelper(argv):
     global dateOfData
+    global finalNormalData
     if len (argv) == 1:
         daemon = "y"
     else:
@@ -59,6 +66,7 @@ def scrapehelper(argv):
             #print "Reading from sample"
             sample = open ('mySample.html', 'r')
             parseHTMLtoJSON(sample.read ())
+<<<<<<< HEAD
             #sending predefined json to web service for now.
 
             json_file = open ('json_sample', 'r')
@@ -66,6 +74,13 @@ def scrapehelper(argv):
             r = requests.post (urlBase+"/cases/scrape/", data = json.dumps(json_data))
             print "======================================================================="
             print r.text
+=======
+            
+            finalJSONData = json.dumps(finalNormalData)
+            print "--------FINAL JSON DATA---------"
+            print finalJSONData
+            r = requests.post ("url", data={"body": finalJSONData, "date":"25-11-2015", "court":"13"})
+>>>>>>> webscraping
 
         else:
             today = date.today() - timedelta(days=2)
@@ -75,13 +90,16 @@ def scrapehelper(argv):
             sessionIDString = "PHPSESSID="+sessionID
             r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
             todayString = today.strftime ('%d-%m-%Y')
+            todayString = "27-11-2015"
             dateOfData = todayString
+            finalNormalData['date'] = dateOfData
             r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": todayString, "q":""})
             courtNos = getAvailableCourts (r2.text)
             for court in courtNos:
                 r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":court.text,"court_wise_submit":"Submit","q":""})
                 parseHTMLtoJSON(r3.text)
 
+<<<<<<< HEAD
             #sending predefined json to web service for now.
             # json_file = open ('json_sample', 'r')
             # json_data = json_file.read ()
@@ -92,6 +110,12 @@ def scrapehelper(argv):
             
             r = requests.post (urlBase+"/cases/scrape/", data = json.dumps(finalDataToJSON))
             print r.text
+=======
+            finalJSONData = json.dumps(finalNormalData)
+            print "--------FINAL JSON DATA---------"
+            print finalJSONData
+            r = requests.post ("url", data={"body": finalJSONData, "date":"25-11-2015", "court":"13"})
+>>>>>>> webscraping
 
         
 
@@ -108,6 +132,10 @@ def getAvailableCourts (htmlText):
 
 def parseHTMLtoJSON(htmlText):
     soup = BeautifulSoup(htmlText, 'html.parser')
+    global caseData
+    global headerData
+    caseData = []
+    headerData = {}
     allTables = soup.findChildren('table')
     storeHeader(allTables[0])
     bodyTables = soup.findChildren('table', {'class':'style3'})
@@ -121,7 +149,7 @@ def storeBody(bodyText):
 
     tempDataSet['serial'] = slNo
     formatCaseData(tempDataSet)
-    renderFullJSON()
+    renderCaseJSON()
 
 def extractBodyText(row):
     children = row.findChildren('tr')
@@ -207,29 +235,18 @@ def storeHeader(headerText):
     headerData["CourtNo"] = courtNo
     headerData["Justice1"] = justice1
     headerData["Justice2"] = justice2
-        
-    print "Court No: ", courtNo
-    print "Justice 1: ", justice1
-    print "Justice 2: ", justice2
-    print "-----"
 
-def renderFullJSON():
-    global finalDataToJSON
-    global finalData
-    tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
-    tempFinalData['court_no'] = headerData["CourtNo"]
-    tempFinalData['judge'] = headerData["Justice1"] + "<br>" +headerData["Justice2"]
-    tempFinalData['case'] = caseData
-    finalData['date'] = dateOfData
-    finalData['courts'] = {'court' : ''}
-    finalData['courts']['court'] = tempFinalData
-    tempFinalData = {"court_no" : '', "judge" : '', "case" : ''}
-    finalDataToJSON = json.dumps(finalData)
 
-    # print "--------------------------FINAL JSONDATA---------------------------------"
-    # pp = pprint.PrettyPrinter(indent=4)
-    # pp.pprint(finalDataToJSON)
+def renderCaseJSON():
+    global finalNormalData
+    tempCaseData = {"court_no" : '', "judge" : '', "cases" : ''}
+    tempCaseData['court_no'] = headerData["CourtNo"]
+    tempCaseData['judge'] = headerData["Justice1"] + "<br>" +headerData["Justice2"]
+    tempCaseData['cases'] = {'case' : ''}
+    tempCaseData['cases']['case'] = caseData
+    finalNormalData['courts']['court'].append(tempCaseData)
 
 
 if __name__ == '__main__':
+    finalNormalData['courts']['court'] = []
     scrapehelper(sys.argv[1:])
