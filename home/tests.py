@@ -13,7 +13,7 @@ class HomeTests(TestCase):
         print "SETTING UP?"
         self.user_name = "admin"
         self.password = "admin"
-
+        self.member1 = Client()
         
     def tearDown(self):
         super(HomeTests, self).tearDown()
@@ -21,58 +21,58 @@ class HomeTests(TestCase):
     
       
     def test_register_user(self):
-        member1 = Client()
+       
         json_data = json.dumps({'username':'test','password':'test','email':'test@b.com'})        
-        response = member1.post("/home/api/user/",json_data, content_type="application/json")
+        response = self.member1.post("/home/api/user/",json_data, content_type="application/json")
         self.assertTrue(response.status_code == 201)  
         testUser = User.objects.last()        
         self.assertTrue(testUser.username == "test")  
     
     def test_register_login(self):
-        member1 = Client()
+        
         json_data = json.dumps({'username':'test','password':'test','email':'test@b.com'})        
-        response = member1.post("/home/api/user/",json_data, content_type="application/json")
+        response = self.member1.post("/home/api/user/",json_data, content_type="application/json")
         self.assertTrue(response.status_code == 201)             
-        response = member1.post("/home/login/",json_data,content_type="application/json",**{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        response = self.member1.post("/home/login/",json_data,content_type="application/json",**{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
         self.assertTrue(response.status_code == 200) 
     
     def test_register_invalid_login(self):
-        member1 = Client()
+    
         json_data = json.dumps({'username':'test','password':'test','email':'test@b.com'})                            
-        response = member1.post("/home/login/",json_data,content_type="application/json",**{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        response = self.member1.post("/home/login/",json_data,content_type="application/json",**{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
         self.assertTrue(response.status_code == 404) 
         
     def test_register_user_same_username(self):
-        member1 = Client()
+        
         json_data = json.dumps({'username':'test','password':'test','email':'test@b.com'})        
-        response = member1.post("/home/api/user/",json_data, content_type="application/json")
+        response = self.member1.post("/home/api/user/",json_data, content_type="application/json")
         self.assertTrue(response.status_code == 201)  
         testUser = User.objects.last()        
         self.assertTrue(testUser.username == "test") 
         json_data = json.dumps({'username':'test','password':'test','email':'test@b.com'})        
-        response = member1.post("/home/api/user/",json_data, content_type="application/json") 
+        response = self.member1.post("/home/api/user/",json_data, content_type="application/json") 
         self.assertTrue(response.status_code == 400) 
         
     def test_logout(self):
-        member1 = Client()
+        
         json_data = json.dumps({'username':'test','password':'test','email':'test@b.com'})        
-        response = member1.post("/home/api/user/",json_data, content_type="application/json")
+        response = self.member1.post("/home/api/user/",json_data, content_type="application/json")
         self.assertTrue(response.status_code == 201)             
-        response = member1.post("/home/login/",json_data,content_type="application/json",**{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        response = self.member1.post("/home/login/",json_data,content_type="application/json",**{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
         self.assertTrue(response.status_code == 200)
-        response = member1.post("/home/logout/")
+        response = self.member1.post("/home/logout/")
         self.assertTrue(response.status_code == 200)
     
     def test_logout_invalid(self):
-        member1 = Client()
+       
         json_data = json.dumps({'username':'test','password':'test','email':'test@b.com'})        
-        response = member1.post("/home/api/user/",json_data, content_type="application/json")
+        response = self.member1.post("/home/api/user/",json_data, content_type="application/json")
         self.assertTrue(response.status_code == 201)             
-        response = member1.post("/home/login/",json_data,content_type="application/json",**{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
+        response = self.member1.post("/home/login/",json_data,content_type="application/json",**{'HTTP_X_REQUESTED_WITH': 'XMLHttpRequest'})
         self.assertTrue(response.status_code == 200)
-        response = member1.post("/home/logout/")
+        response = self.member1.post("/home/logout/")
         self.assertTrue(response.status_code == 200)
-        response = member1.post("/home/logout/")
+        response = self.member1.post("/home/logout/")
         self.assertTrue(response.status_code == 404)
         
 

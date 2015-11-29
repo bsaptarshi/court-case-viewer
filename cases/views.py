@@ -16,7 +16,8 @@ def webScraping(request):
         #print data
         court_no = None
         todaysDate = None
-        data = request.body              
+        data = request.body      
+          
         data = data.replace("<br>"," ")
         data = data.replace("</br>"," ")        
         data = ast.literal_eval(data)

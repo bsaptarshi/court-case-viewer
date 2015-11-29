@@ -1,9 +1,36 @@
 from django.test import TestCase, Client
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
-import json
+import json, os, ast
+
+from cases.models import Cases, CasesDay
 # Create your tests here.
 
+file_path =  os.path.dirname(os.path.dirname(os.path.abspath(__file__)))+"/cases/"
+
+class WebScrapingCodeTest(TestCase):
+    #fixtures = ['fixtures.json']
+
+    def setUp(self):
+        super(WebScrapingCodeTest, self).setUp()
+        self.member = Client()
+        # Create a user.
+        self.username = 'daniel'
+        self.password = 'pass'
+        self.user = User.objects.create_user(self.username, 'daniel@example.com', self.password)
+        self.detail_url = '/cases/scrape/'
+    def testWebScraping(self):
+        json_data = json.load(open(file_path+"json_sample"))
+        json_data =  ast.literal_eval(json.dumps(json_data))  
+        
+        self.assertTrue(User.objects.all().count()==1)              
+        self.assertTrue(Cases.objects.all().count()==0)
+        self.assertTrue(CasesDay.objects.all().count()==0)
+        response = self.member.post(self.detail_url,json_data,content_type="application/json")    
+        self.assertTrue(response.status_code==200) 
+        self.assertTrue(Cases.objects.all().count()==4)
+        self.assertTrue(User.objects.all().count()==15)
+        self.assertTrue(CasesDay.objects.all().count()==5)
 
 
 class CasesTest(TestCase):
@@ -14,80 +41,77 @@ class CasesTest(TestCase):
         print "SETTING UP?"
         self.user_name = "admin"
         self.password = "admin"
-        
+        self.member1 = Client()
+        self.member1.login(username=self.user_name,password=self.password)
     def tearDown(self):
         print "Tear Down"
         
     def test_cases_for_a_day(self):
-        member1 = Client()
-        member1.login(username=self.user_name,password=self.password)
+        
         date = "2015-11-24"
         json_data = {'date':date,"limit":10}
-        response = member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")        
+        response = self.member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")        
         self.assertTrue(response.status_code == 200)  
         
     def test_cases_for_a_day_invalid_date(self):
-        member1 = Client()
-        member1.login(username=self.user_name,password=self.password)
+       
         date = "2015/11/24" 
         json_data = {'date':date,"limit":10}
-        response = member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")                
+        response = self.member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")                
         self.assertTrue(response.status_code == 400)  
     
     def test_cases_for_a_day_limit(self):
-        member1 = Client()
-        member1.login(username=self.user_name,password=self.password)
+        
         date = "2015-11-24"
         limit = 10
         json_data = {'date':date,"limit":limit}
-        response = member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
+        response = self.member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
         self.assertTrue(response.status_code == 200)  
         json_data =  json.loads(response.content)                 
         self.assertTrue(len(json_data['objects']) <= limit) 
         
     def test_cases_for_a_day_case_no(self):
-        member1 = Client()
-        member1.login(username=self.user_name,password=self.password)
+       
         case_no = "C.A. No. 2884/2006"
         limit = 10
         json_data = {'case__name':case_no,"limit":limit}
-        response = member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
+        response = self.member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
         json_data =  json.loads(response.content)                         
         self.assertTrue(len(json_data['objects']) >= 0) 
         self.assertTrue(response.status_code == 200)
         
     def test_cases_for_a_day_case_no_invalid(self):
-        member1 = Client()
-        member1.login(username=self.user_name,password=self.password)
+       
         case_no = "fsfsadfsadf"
         limit = 10
         json_data = {'case__name':case_no,"limit":limit}
-        response = member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
+        response = self.member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
         json_data =  json.loads(response.content)           
         self.assertTrue(len(json_data['objects']) == 0)  
              
     def test_cases_for_a_day_court_no(self):
-        member1 = Client()
-        member1.login(username=self.user_name,password=self.password)
+        
         court_number = "10"
         limit = 10
         json_data = {'court__number':court_number,"limit":limit}
-        response = member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
+        response = self.member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
         json_data =  json.loads(response.content)                         
         self.assertTrue(len(json_data['objects']) >= 0) 
         self.assertTrue(response.status_code == 200) 
         
     def test_cases_for_a_day_court_no_invalid(self):
-        member1 = Client()
-        member1.login(username=self.user_name,password=self.password)
+      
         court_number = "100"
         limit = 10
         json_data = {'court__number':court_number,"limit":limit}
-        response = member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
+        response = self.member1.get('/cases/api/caseday/?format=json', json_data, content_type="application/json")       
         json_data =  json.loads(response.content)                         
         self.assertTrue(len(json_data['objects']) == 0) 
         self.assertTrue(response.status_code == 200)
-        
+
+
+    
+    
 class CasesResourceTest(ResourceTestCase):
     # Use ``fixtures`` & ``urls`` as normal. See Django's ``TestCase``
     # documentation for the gory details.
@@ -101,7 +125,8 @@ class CasesResourceTest(ResourceTestCase):
         self.password = 'pass'
         self.user = User.objects.create_user(self.username, 'daniel@example.com', self.password)
         self.detail_url = '/cases/api/cases/'
-      
+    def tearDown(self):
+        print "Tear Down"
     def get_credentials(self):
         return self.create_basic(username=self.username, password=self.password)
 
@@ -131,7 +156,8 @@ class CasesDayResourceTest(ResourceTestCase):
         self.password = 'pass'
         self.user = User.objects.create_user(self.username, 'daniel@example.com', self.password)
         self.detail_url = '/cases/api/caseday/'
-      
+    def tearDown(self):
+        print "Tear Down"
     def get_credentials(self):
         return self.create_basic(username=self.username, password=self.password)
 
@@ -160,7 +186,8 @@ class CourtResourceTest(ResourceTestCase):
         self.password = 'pass'
         self.user = User.objects.create_user(self.username, 'daniel@example.com', self.password)
         self.detail_url = '/cases/api/court/'
-      
+    def tearDown(self):
+        print "Tear Down"
     def get_credentials(self):
         return self.create_basic(username=self.username, password=self.password)
 
