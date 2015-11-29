@@ -74,7 +74,8 @@ left:12px;
 p {
   margin:5px;
 }
-        </style>
+
+ </style>
     </head>
     <body style="background:white;">
         <div id="wrapper">
@@ -95,10 +96,14 @@ p {
             <hr/><br/>
                 <div id="tabs-2" style="overflow-x:scroll;">
                     <p><br/>
-                    Schedule For <input type="text" id="datepicker"><br/><br/>
+                    <label class="title">Schedule For </label><input type="text" id="datepicker"><br/><br/>
+                    <label class="title">Case number </label> <input type="text" id="caseno"><br/><br/>
+                   <label class="title"> Court number </label><input type="text" id="courtno"><br/><br/>
+                    <input type="button" id="clear" value="Clear">
                     <table id="scheduleTable" class="display" cellspacing="0">
                         <tbody id="tableData">
                           
+                           
                            
                         </tbody>
                     </table>
