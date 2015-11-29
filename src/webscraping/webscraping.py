@@ -11,7 +11,7 @@ headerData = {}
 bodyData = []
 
 
-urlBase = "http://localhost:8000"
+urlBase = "http://52.24.198.10/"
 keyMap = {'0' : 'serial', '1' : 'case_no', '2' : 'party', '3' : 'petitionar_advocates', '4' : 'respondent_advocates'}
 toJSONMap = {'serial' : 'serial', 'case_no' : 'case_no', 'party' : 'party', 'petitionar_advocates' : 'petitionar_advocates', 'respondent_advocates' : 'respondent_advocates'}
 
