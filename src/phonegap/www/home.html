@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link href="css/style.css" rel='stylesheet' type='text/css' />
+        <link type="text/css" rel="stylesheet" href="css/jquery.mmenu.all.css" />
+        <link type="text/css" rel="stylesheet" href="css/jquery-ui.min.css" />
+        <link href="css/jquery.dataTables.min.css" rel='stylesheet' type='text/css' /> 
+        <link href="css/dataTables.jqueryui.min.css" rel='stylesheet' type='text/css' /> 
+        <title>Court Case Schedule Viewer</title>
+        <style type="text/css">
+            .header{
+                background-color: white; 
+                height: 5%
+                text-align:center;
+                padding:3% 0% 0% 0%;
+            }
+            .footer{
+                position: inherit;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                padding: 1rem;
+                text-align: right;
+            }
+            h2{
+                text-align: center;
+                font-size: 18px;
+            }
+            .loginForm{
+                position:absolute;             /* position in the center of the screen */
+                width: 100%;
+                top:50%;                  /* text area width */
+                text-align: center;
+                margin: 0 auto;
+            }
+.table_row {
+height:40px;
+width:100%;
+}
+.title {
+  padding-left:10px;
+}
+.card {
+background-color:#fff;
+padding-top:12px;
+padding-top:10px;
+width:100%;
+position:relative;
+-webkit-box-shadow: 0px 3px 18px 1px rgba(0,0,0,0.15);
+-moz-box-shadow: 0px 3px 18px 1px rgba(0,0,0,0.15);
+box-shadow: 0px 3px 18px 1px rgba(0,0,0,0.15);
+}
+.serial {
+left:12px;
+}
+.court_no {
+left:12px;
+}
+.party {
+left:12px;
+}
+.petitioner_adv {
+left:12px;
+}
+.respondent_adv{
+left:12px;
+}
+.details {
+left:12px;
+}
+p {
+  margin:5px;
+}
+.notice {
+  display: none;
+  padding-left:10px;
+}
+.noticeTwo {
+  display: none;
+  padding-left:10px;
+}
+ </style>
+    </head>
+    <body style="background:white;">
+        <div id="wrapper">
+            <div id="header">
+                <a href="#menu-left"> </a>
+            </div>
+            <nav id="menu-left">
+                <ul>
+                
+                	 <li  id="username"></li>
+                    <li><a href="#tabs-2" id="li2">Schedule</a></li>
+                    <li id="logout"><a>Log Out</a></li>
+                </ul>
+            </nav>
+            <div class="header">
+                <h2>Court Case Schedule Viewer</h2> 
+            </div>
+            <hr/><br/>
+                <div id="tabs-2" style="overflow-x:scroll; overflow-y:scroll;">
+                    <p><br/>
+                    <label class="title">Schedule For </label><input type="text" id="datepicker"><br/><br/>
+                   <label class="title">Court number </label><input type="text" id="courtno"><br/><br/>
+                    <label class="title">Case number </label> <input type="text" id="caseno"><br/><br/>
+                    <input type="button" id="clear" value="Clear">
+                    <div class="notice">Fetching Data. Please Wait.</div>
+                    <div class="noticeTwo">No Data Available.</div>
+                    <table id="scheduleTable" class="display" cellspacing="0">
+                        <tbody id="tableData">
+                          
+                           
+                           
+                        </tbody>
+                    </table>
+                    </p>
+                </div>
+            <div id="aboutUs" style="width:90%;margin:auto;">
+                <br><br><br>
+                This application has been developed by a group of six students as a part of  the CSE 542 Software Engineering Concepts project.<br><br>
+                The team members are -<br><br>
+                Saptarshi Bhattacharjee<br>
+                Akash Deshpande<br>
+                Srinivasan Rajappa<br>
+                Sagar Dulhani<br>
+                Abhimat Varma<br>
+                Aniket Deole<br><br>
+                Please reach out at saptarsh@buffalo.edu or aniketma@buffalo.edu for further details about the application, how to, FAQs.
+            </div>
+            
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>       
+        <script src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/jquery.mmenu.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="js/home.js"></script>
+      
+        <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+         <!-- 
+        <script type="text/javascript" src="js/dataTables.jqueryui.min.js"></script>
+         -->
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+         
+        
+        
+    </body>
+</html>
