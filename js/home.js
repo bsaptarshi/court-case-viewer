@@ -44,6 +44,7 @@ $(function(){
     			var serial = "";
     			var case_name = "";
     			var court = 0;
+    			var date = "";
         		$.each(v,function(key,value){
         			
         			
@@ -71,10 +72,18 @@ $(function(){
 	        				
 	        				court = value.number.toString();
 	        				break;
+	        			case "date":	        				
+	        				date = value;
+	        				break;
         			}  
         		
         		});
-            var mainData = "<tr><td><div class=card><p class=serial><b>Case NO: </b>" +  case_name +"</p><p class=serial><b>Serial NO: </b>" +  serial +"</p><p class=court_no><b>COURT NO.: </b> " + court + "</p><p class=party><b>PARTY: </b><br/> " + defendant + " Vs " + respondant + "<p class=petitioner_adv><B>PETITIONER ADV.:</b> <br/>" + def_lawyers + "</p><p class=respondent_adv><b>RESPONDENT ADV.: </b><br/>"+ res_lawyers +"</p><p class=details><b>DETAILS:</b><br/><br/></p></div>"
+        		
+        	defendant = defendant.replace("amp;","");
+        	respondant = respondant.replace("amp;","");
+        	def_lawyers = def_lawyers.replace("amp;","");
+        	res_lawyers = res_lawyers.replace("amp;","");
+            var mainData = "<tr><td><div class=card><p class=serial><b>Case NO: </b>" +  case_name +"</p><p class=serial><b>Serial NO: </b>" +  serial +"</p><p class=court_no><b>COURT NO.: </b> " + court + "</p><p class=party><b>PARTY: </b><br/> " + defendant + " Vs " + respondant + "<p class=petitioner_adv><B>PETITIONER ADV.:</b> <br/>" + def_lawyers + "</p><p class=respondent_adv><b>RESPONDENT ADV.: </b><br/>"+ res_lawyers +"</p><p class=date><b>Date:</b><br />"+date+"</p><br /></div>"
 //        		var mainData = case_name+court+defendant+respondant+def_lawyers+res_lawyers;
     			$("#tableData").append(mainData);
         	});
