@@ -1,0 +1,73 @@
+{
+  "date": "25-11-2015",
+  "courts": {
+    "court": [
+      {
+        "court_no": "10",
+        "judge" : "Mr.S. Das",
+        "cases": {
+          "case": [
+            {
+              "serial": "1",
+              "case_no": "C.A. No. 6015/2009",
+              "party": "STATE OF H.P.& ORS.Vs. ASHWANI KUMAR & ORS.",
+              "petitionar_advocates": "MS. PRAGATI NEEKHRA",
+              "respondent_advocates": [
+                "MR. ANIL NAG",
+                "MR. ANIP SACHTHEY"
+              ]
+            },
+            {
+              "serial": "1",
+              "case_no": "C.A. No. 6016/2009",
+              "party": "STATE OF H.P.& ORS.Vs. ASHWANI KUMAR & ORS.",
+              "petitionar_advocates": "MS. PRAGATI NEEKHRA",
+              "respondent_advocates": [
+                "MR. ANIL NAG",
+                "MR. ANIP SACHTHEY"
+              ]
+            },
+            {
+              "serial": "2",
+              "case_no": "C.A. No. 6015/2009",
+              "party": "STATE OF H.P.& ORS.Vs. ASHWANI KUMAR & ORS.",
+              "petitionar_advocates": "MS. PRAGATI NEEKHRA",
+              "respondent_advocates": [
+                "MR. ANIL NAG",
+                "MR. ANIP SACHTHEY"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "court_no": "3",
+        "judge" : "Mr.S. Das <br> Mr.A. Dey",
+        "cases": {
+          "case": [
+            {
+              "serial": "1",
+              "case_no": "C.A. No. 213/2009",
+              "party": "STATE OF MP.& ORS.Vs. ASHWANI KUMAR & ORS.",
+              "petitionar_advocates": "MS. PRAGATI NEEKHRAaSD",
+              "respondent_advocates": [
+                "MR. ANIL NAASDG",
+                "MR. ANIP SACHTHEY"
+              ]
+            },
+            {
+              "serial": "2",
+              "case_no": "C.A. No. 6015/200129",
+              "party": "STAASDTE OF H.P.& ORS.Vs. ASHWANI KUMAR & ORS.",
+              "petitionar_advocates": "MS. PRADDGATI NEEKHRA",
+              "respondent_advocates": [
+                "MR. ANDIL NAG",
+                "MR. ANIP SACHTHEY"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
