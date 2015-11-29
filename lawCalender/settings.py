@@ -24,7 +24,7 @@ MEDIA_ROOT = BASE_DIR+'/templates/media'
 SECRET_KEY = 'l6vunc-8&vuo*e59m3f!!$a%hm*y-f0h^!s148z35gr=&&n9va'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
