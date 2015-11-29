@@ -88,9 +88,10 @@ class CasesDayResources(ModelResource):
         filtering = {}
         for field in CasesDay.__dict__['_meta'].fields:
             filtering.update({field.name : ALL_WITH_RELATIONS})
+            
 
 class CaseRelatedResources(ModelResource):
-    primary_case = fields.ForeignKey(CasesResources, 'case',full= True)
+    primary_case = fields.ForeignKey(CasesResources, 'primary_case',full= True)
     class Meta:
         queryset = CaseRelated.objects.filter()
         resource_name = 'caserelated'

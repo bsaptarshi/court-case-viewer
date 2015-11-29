@@ -76,7 +76,7 @@ def scrapehelper(argv):
 
 
         else:
-            today = date.today() - timedelta(days=2)
+            today = date.today()
             r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
             sessionID = r0.headers['Set-Cookie'].split('=', 1)[1].split(';')[0]
 
