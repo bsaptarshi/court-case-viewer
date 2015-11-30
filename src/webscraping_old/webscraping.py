@@ -2,15 +2,16 @@ from lxml import html
 import requests
 from bs4 import BeautifulSoup
 import re
-from collections import defaultdict
-import pprint
-from datetime import date
+from datetime import date, timedelta
 import sys
 import json
 
 
 headerData = {}
 bodyData = []
+
+
+urlBase = "http://52.24.198.10/"
 keyMap = {'0' : 'serial', '1' : 'case_no', '2' : 'party', '3' : 'petitionar_advocates', '4' : 'respondent_advocates'}
 toJSONMap = {'serial' : 'serial', 'case_no' : 'case_no', 'party' : 'party', 'petitionar_advocates' : 'petitionar_advocates', 'respondent_advocates' : 'respondent_advocates'}
 
@@ -23,10 +24,12 @@ caseData = []
 tempDataSet = {'serial':'', 'case_no':'', 'party':'', 'petitionar_advocates':'', 'respondent_advocates':''}
 dateOfData = ''
 
+
 finalNormalData = {'date' : '', 'courts' : ''}
 finalNormalData['courts'] = {'court' : ''}
 finalNormalData['courts']['court'] = []
 finalJSONData = ''
+
 
 
 def scrapehelper(argv):
@@ -59,24 +62,27 @@ def scrapehelper(argv):
             parseHTMLtoJSON(sample.read ())
     else:
         if argv[0] == "sample":
-            print "Reading from sample"
+            #print "Reading from sample"
             sample = open ('mySample.html', 'r')
             parseHTMLtoJSON(sample.read ())
-            
-            finalJSONData = json.dumps(finalNormalData)
-            print "--------FINAL JSON DATA---------"
-            print finalJSONData
-            r = requests.post ("url", data={"body": finalJSONData, "date":"25-11-2015", "court":"13"})
+
+            #sending predefined json to web service for now.
+
+            json_file = open ('json_sample', 'r')
+            json_data = json.load(json_file)            
+            r = requests.post (urlBase+"/cases/scrape/", data = json.dumps(json_data))
+            print "======================================================================="
+            print r.text
+
 
         else:
-            today = date.today ()
+            today = date.today()
             r0 = requests.get ('http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=&q=TkRZeU5UQXpaV1kwWldNeVpHWmlOVGxoWXpFNFlqRXdOVE5pWmpNd00yVT0=')
             sessionID = r0.headers['Set-Cookie'].split('=', 1)[1].split(';')[0]
 
             sessionIDString = "PHPSESSID="+sessionID
             r1 = requests.post ("http://clists.nic.in/viewlist/index.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php?court=VTNWd2NtVnRaU0JEYjNWeWRDQnZaaUJKYm1ScFlRPT0=","DNT":"1"}, data={"listtype":"DAILY LIST OF REGULAR HEARING MATTERS", "submit_list_value": "submit", "q":""})
-            todayString = today.strftime ('%d-%m-%Y')
-            todayString = "27-11-2015"
+            todayString = today.strftime ('%d-%m-%Y')            
             dateOfData = todayString
             finalNormalData['date'] = dateOfData
             r2 = requests.post ("http://clists.nic.in/viewlist/search_result.php", headers= {"Cookie": sessionIDString, "Referer":"http://clists.nic.in/viewlist/index.php","DNT":"1"}, data={"case":"COURT", "date": todayString, "q":""})
@@ -85,10 +91,19 @@ def scrapehelper(argv):
                 r3 = requests.post("http://clists.nic.in/viewlist/search_result_final.php",headers={"Cookie":sessionIDString,"Referer":"http://clists.nic.in/viewlist/search_result.php","DNT":"1"},data={"court_wise":court.text,"court_wise_submit":"Submit","q":""})
                 parseHTMLtoJSON(r3.text)
 
+
+            #sending predefined json to web service for now.
+            # json_file = open ('json_sample', 'r')
+            # json_data = json_file.read ()
+            # print json_data
+            # Access finalDataToJSON var to get the final data in JSON form
+           
+            #r = requests.post ("url", data={"body": finalDataToJSON, "date":"25-11-2015", "court":"13"})
+                       
             finalJSONData = json.dumps(finalNormalData)
-            print "--------FINAL JSON DATA---------"
-            print finalJSONData
-            r = requests.post ("url", data={"body": finalJSONData, "date":"25-11-2015", "court":"13"})
+            r = requests.post (urlBase+"/cases/scrape/", data =finalJSONData )
+            print r.text
+
 
         
 
@@ -197,7 +212,6 @@ def formatCaseData(data):
     caseData.append(data)
 
 
-
 def storeHeader(headerText):
     children = headerText.find('td')
     contentText = re.sub('<[^<]+?>', '&&&', children.renderContents().strip()).split('&&&')
@@ -218,6 +232,7 @@ def renderCaseJSON():
     tempCaseData['cases'] = {'case' : ''}
     tempCaseData['cases']['case'] = caseData
     finalNormalData['courts']['court'].append(tempCaseData)
+    
 
 
 if __name__ == '__main__':
